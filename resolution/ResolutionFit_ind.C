@@ -124,6 +124,10 @@ using namespace RooFit;
   RooArgSet ntupleVarSet(x,w,massrc);
   RooDataSet dataset("resoM","resoM",ntupleVarSet,WeightVar("myW"));
 
+//  TString inputDir = "root://lxcms03://data3/Higgs/160225/";
+//  TString  inputDir = "/afs/cern.ch/work/c/cayou/HighMass_RunII/CMSSW_7_6_3/src/ZZAnalysis/AnalysisStep/test/CombInputs/";
+//  TString  inputDir = "/afs/cern.ch/work/c/cayou/HighMass_RunII/CMSSW_8_0_9/src/ZZAnalysis/AnalysisStep/test/prod/";
+//    TString  inputDir = "/afs/cern.ch/user/w/wqin/CMSSW_8_0_7/src/ZZAnalysis/AnalysisStep/test/prod/";
 
 	char dest[PATH_MAX];
 	sprintf(dest, "%s", gSystem->pwd());
@@ -282,7 +286,7 @@ using namespace RooFit;
 
      int MassBin[] ={1000};
      int Inputfiles[]={1000};
-     short ZZCandType=1; //1 for merged jet (J), 2 for two resolved jets (jj)
+     short ZZCandType=2; //1 for merged jet (J), 2 for two resolved jets (jj)
      int Nbins=sizeof(MassBin)/sizeof(*MassBin);
      int NFiles=sizeof(Inputfiles)/sizeof(*Inputfiles);
 
