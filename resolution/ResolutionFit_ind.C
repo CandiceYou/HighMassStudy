@@ -58,7 +58,7 @@ using namespace RooFit;
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-    void IndiFit(char* channel ="4e", int massBin[]={}, int maxMassBin=0, int inputfiles[]={}, int Nfiles=0)                            
+    void IndiFit(char* channel ="4e", int massBin[]={}, int maxMassBin=0, int inputfiles[]={}, int Nfiles=0, short ZZCandType=0) 
  {
 
  // ------ root settings ---------
@@ -81,9 +81,10 @@ using namespace RooFit;
   float genM;
 //  double wt_2bp;
   vector<float> *wt=0;
-  vector<Short_t> *z1flav=0,*z2flav=0,*zzsel=0;
+  vector<Short_t> *z1flav=0,*z2flav=0,*zzsel=0,*candType=0;
   int ZZ_pass_ID,ZZ_pass_SIP,ZZ_pass_ISO;
   float weight = 0,PUWeight=0,genHEPMCweight=0;
+  char cType[10];
   char tempmass[100];
   char tempmass2[100];
   double width[100];
@@ -114,6 +115,11 @@ using namespace RooFit;
   xMin[i] = width[i]*(-30);
   xMax[i] = width[i]*(25);
   }
+
+  if (ZZCandType == 1)
+    sprintf(cType,"J");
+  else if (ZZCandType ==2)
+    sprintf(cType,"jj");
 
   RooArgSet ntupleVarSet(x,w,massrc);
   RooDataSet dataset("resoM","resoM",ntupleVarSet,WeightVar("myW"));
@@ -160,7 +166,10 @@ using namespace RooFit;
     //candTree->SetBranchAddress("ZZ_pass_SIP",&ZZ_pass_SIP);
     candTree->SetBranchAddress("Z1Mass",&Z1Mass);
     candTree->SetBranchAddress("Z2Mass",&Z2Mass);
+    candTree->SetBranchAddress("ZZCandType",&candType);
 
+
+    int wenzer = 0;
     for(int k=0; k<nentries; k++){
 //    for(int k=0; k<100000; k++){
       candTree->GetEvent(k);
@@ -170,18 +179,22 @@ using namespace RooFit;
       if(channel=="2e2mu" && (z1flav->at(0))*(z2flav->at(0)) != 20449) continue;
       if (PUWeight*genHEPMCweight <= 0 ) cout << "Warning! Negative weight events" << endl;
 
-     for (int i=0; i<maxMassBin; i++) {
-      ntupleVarSet.setCatIndex("massrc",massBin[i]);
-      ntupleVarSet.setRealValue("reso",(m4l->at(0))-genM);
-      ntupleVarSet.setRealValue("myW",PUWeight*genHEPMCweight);
-//      ntupleVarSet.setRealValue("myW",weight*(wt->at(7)));
-      if(((zzsel->at(0))>=100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
-//      if((zzsel>=100 && Z1Mass>40 && Z1Mass<120 && Z2Mass>4 && Z2Mass<120 && m4l>100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
-//      if((zzsel>=100 && genM<pm && ZZ_pass_ID==1 && ZZ_pass_ISO==1 && ZZ_pass_SIP==1 && Z1Mass>40 && Z1Mass<120 && Z2Mass>4 && Z2Mass<120 && m4l>100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05)))) 
-       dataset.add(ntupleVarSet, PUWeight*genHEPMCweight);
-//       dataset.add(ntupleVarSet, weight*(wt->at(7)));
+      for (int w=0; w < (*candType).size(); w++) {
+       if (candType->at(w)==ZZCandType) {
+         for (int i=0; i<maxMassBin; i++) {
+           ntupleVarSet.setCatIndex("massrc",massBin[i]);
+           ntupleVarSet.setRealValue("reso",(m4l->at(w))-genM);
+           ntupleVarSet.setRealValue("myW",PUWeight*genHEPMCweight);
+//           ntupleVarSet.setRealValue("myW",weight*(wt->at(7)));
+           if(((zzsel->at(w))>=100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
+//           if((zzsel>=100 && Z1Mass>40 && Z1Mass<120 && Z2Mass>4 && Z2Mass<120 && m4l>100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
+//           if((zzsel>=100 && genM<pm && ZZ_pass_ID==1 && ZZ_pass_ISO==1 && ZZ_pass_SIP==1 && Z1Mass>40 && Z1Mass<120 && Z2Mass>4 && Z2Mass<120 && m4l>100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05)))) 
+             cout << "added -- " << ++wenzer << endl;
+             dataset.add(ntupleVarSet, PUWeight*genHEPMCweight);
+//             dataset.add(ntupleVarSet, weight*(wt->at(7)));
       //--------
-
+        }
+      }
     }
   }
 
@@ -216,7 +229,7 @@ using namespace RooFit;
 //    fitres[i] = (RooFitResult*)DCBall[i]->fitTo(*dataset_sub[i],SumW2Error(1),Range(xMin[i],xMax[i]),Strategy(2),NumCPU(8),Save(true));
     RooArgSet * params = DCBall[i]->getParameters(x);
     char paramfilename[100];
-    sprintf(paramfilename,"SingleMassFit_ResoParam_MH%d_%s.txt",massBin[i],channel);
+    sprintf(paramfilename,"SingleMassFit_ResoParam_MH%d_%s_%s.txt",massBin[i],channel,cType);
     params->writeToFile(paramfilename) ;
 
     TCanvas *c1 = new TCanvas("c1","c1",725,725);
@@ -252,10 +265,7 @@ using namespace RooFit;
     frame2->SetMaximum(10);
     char filename[100];
 //    sprintf(filename,"/afs/cern.ch/user/c/cayou/www/HighMass/160217/resolution_test/Resolution_MH%d_%s_%s.png",massBin[i],fit,channel);
-    sprintf(filename,"Resolution_MH%d_%s_singleMassFit.png",massBin[i],channel);
-
-///////////////////////////THIS IS BREAKING???
-    cout << endl << filename << endl;
+    sprintf(filename,"Resolution_MH%d_%s_%s_singleMassFit.png",massBin[i],channel,cType);
     c1->SaveAs(filename);
     }
   
@@ -273,10 +283,11 @@ using namespace RooFit;
 
      int MassBin[] ={1000};
      int Inputfiles[]={1000};
+     short ZZCandType=1; //1 for merged jet (J), 2 for two resolved jets (jj)
      int Nbins=sizeof(MassBin)/sizeof(*MassBin);
      int NFiles=sizeof(Inputfiles)/sizeof(*Inputfiles);
 
-     IndiFit("2l2q",MassBin,Nbins,Inputfiles,NFiles);
+     IndiFit("2l2q",MassBin,Nbins,Inputfiles,NFiles,ZZCandType);
 //     IndiFit("4mu",MassBin,Nbins,Inputfiles,NFiles);
 //     IndiFit("2e2mu",MassBin,Nbins,Inputfiles,NFiles);
 //     IndiFit("4e",MassBin,Nbins,Inputfiles,NFiles);
