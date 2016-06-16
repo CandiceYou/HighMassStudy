@@ -35,7 +35,7 @@ void  readData(char* channel="4e")
     candTree->SetBranchAddress("Z1Flav",&z1flav);
     candTree->SetBranchAddress("Z2Flav",&z2flav);
     candTree->SetBranchAddress("overallEventWeight",&weight);
-    candTree->SetBranchAddress("PoleMass",&pm);
+    candTree->SetBranchAddress("PoleMass",&pm); // not used
     candTree->SetBranchAddress("ZZsel",&zzsel);
     candTree->SetBranchAddress("Z1Mass",&Z1Mass);
     candTree->SetBranchAddress("Z2Mass",&Z2Mass);
@@ -53,8 +53,8 @@ void  readData(char* channel="4e")
       ntupleVarSet.setRealValue("reso",m4l-genM);
       ntupleVarSet.setRealValue("myW",weight);
 //      ntupleVarSet.setRealValue("myW",weight*(wt->at(7)));
-
-      if((zzsel>=100 && genM<=pm && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
+for(auto && zz : zzsel)
+      if((zz>=100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
 
        dataset->add(ntupleVarSet, weight);
 //       dataset.add(ntupleVarSet, weight*(wt->at(7)));

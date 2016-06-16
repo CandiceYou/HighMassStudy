@@ -118,10 +118,12 @@ using namespace RooFit;
   RooArgSet ntupleVarSet(x,w,massrc);
   RooDataSet dataset("resoM","resoM",ntupleVarSet,WeightVar("myW"));
 
-//  TString inputDir = "root://lxcms03://data3/Higgs/160225/";
-//  TString  inputDir = "/afs/cern.ch/work/c/cayou/HighMass_RunII/CMSSW_7_6_3/src/ZZAnalysis/AnalysisStep/test/CombInputs/";
-//  TString  inputDir = "/afs/cern.ch/work/c/cayou/HighMass_RunII/CMSSW_8_0_9/src/ZZAnalysis/AnalysisStep/test/prod/";
-  TString  inputDir = "/afs/cern.ch/user/w/wqin/CMSSW_8_0_7/src/ZZAnalysis/AnalysisStep/test/prod/";
+
+	char dest[PATH_MAX];
+	sprintf(dest, "%s", gSystem->pwd());
+	char * pchar = strstr(dest, "prod");
+	strcpy(pchar, "prod/\0");
+	TString inputDir = dest;
 
   vector<TString> files;
 
