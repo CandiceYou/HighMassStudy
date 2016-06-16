@@ -137,7 +137,7 @@ using namespace RooFit;
   for (int i=0; i<Nfiles; i++) {
 //    sprintf(inputfile,"gen_ggH_noCut/mytree/PT13TeV/ggH%d/ZZ4lAnalysis.root",inputfiles[i]);
 //    sprintf(inputfile,"ggH_spin0_rw/mytree/PT13TeV/ggH%d/ZZ4lAnalysis.root",inputfiles[i]);
-     sprintf(inputfile,"wqin_test/my_tree/PT13TeV/ggH_zz2l2q_M%d/ZZ2l2qAnalysis.root",inputfiles[i]);
+     sprintf(inputfile,"wqin_test/mytree/PT13TeV/ggH_zz2l2q_M%d/ZZ2l2qAnalysis.root",inputfiles[i]);
     files.push_back(inputfile);
   }
 
@@ -170,8 +170,6 @@ using namespace RooFit;
     candTree->SetBranchAddress("Z2Mass",&Z2Mass);
     candTree->SetBranchAddress("ZZCandType",&candType);
 
-
-    int wenzer = 0;
     for(int k=0; k<nentries; k++){
 //    for(int k=0; k<100000; k++){
       candTree->GetEvent(k);
@@ -191,7 +189,6 @@ using namespace RooFit;
            if(((zzsel->at(w))>=100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
 //           if((zzsel>=100 && Z1Mass>40 && Z1Mass<120 && Z2Mass>4 && Z2Mass<120 && m4l>100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
 //           if((zzsel>=100 && genM<pm && ZZ_pass_ID==1 && ZZ_pass_ISO==1 && ZZ_pass_SIP==1 && Z1Mass>40 && Z1Mass<120 && Z2Mass>4 && Z2Mass<120 && m4l>100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05)))) 
-             cout << "added -- " << ++wenzer << endl;
              dataset.add(ntupleVarSet, PUWeight*genHEPMCweight);
 //             dataset.add(ntupleVarSet, weight*(wt->at(7)));
       //--------
