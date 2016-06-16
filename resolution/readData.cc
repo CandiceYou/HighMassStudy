@@ -16,7 +16,7 @@ void  readData(char* channel="4e")
   dataset = new RooDataSet("resoM","resoM",ntupleVarSet,WeightVar("myW"));
 
   for (int i=0; i<Nfiles; i++) {
-     sprintf(inputfile,"2016_gg2bp_merged/gg2bp_W0_M%d/ZZ4lAnalysis.root",inputfiles[i]);
+     sprintf(inputfile,"PT13TeV/ggH_zz2l2q_M%d/ZZ2l2qAnalysis.root",inputfiles[i]);
     files.push_back(inputfile);
   }
 
