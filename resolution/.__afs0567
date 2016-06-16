@@ -1,0 +1,60 @@
+#!/bin/bash          
+
+fit=$1
+
+#for ch in {4mu,4e,2e2mu}
+for ch in {4mu,2e2mu} 
+#for ch in 4mu
+do
+MassStr=""
+paramIndex=0
+massIndex=0
+for mass in {120,140,160,180,200,220,240,260,280,300,320,340,360,380,400,420,440,460,480,500,520,540,560,580,600,620,640,660,680,700,720,740,760,780,800,820,840,860,880,900,950,1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500,1550,1600}
+do
+MassStr+="$mass,"
+((massIndex++))
+done
+echo "$MassStr"
+
+for var in {mean,sigma,a1,a2,n1,n2}
+do
+((paramIndex++))
+ParamStr[$paramIndex]=""
+ErrStr[$paramIndex]=""
+FitParamStr[$paramIndex]=""
+for mass in {120,140,160,180,200,220,240,260,280,300,320,340,360,380,400,420,440,460,480,500,520,540,560,580,600,620,640,660,680,700,720,740,760,780,800,820,840,860,880,900,950,1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500,1550,1600}
+do
+ParamStr[$paramIndex]+="`awk -v ORS="," '/'$var'_CB/{print $3}' ../single/SingleMassFit_ResoParam_MH${mass}_${ch}.txt`"
+ErrStr[$paramIndex]+="`awk -v ORS="," '/'$var'_CB/{print $5}' ../single/SingleMassFit_ResoParam_MH${mass}_${ch}.txt`"
+done
+
+echo ${var}
+echo "${ParamStr[$paramIndex]}"
+echo "${var}_Error"
+echo "${ErrStr[$paramIndex]}"
+
+
+Param_p0[$paramIndex]="`awk  '/'$var'_bindFunction_0/{print $3}' ../simfit/simul_param_pol_${ch}.txt`"
+Param_p1[$paramIndex]="`awk  '/'$var'_bindFunction_1/{print $3}' ../simfit/simul_param_pol_${ch}.txt`"
+Param_p2[$paramIndex]="`awk  '/'$var'_bindFunction_2/{print $3}' ../simfit/simul_param_pol_${ch}.txt`"
+Param_p3[$paramIndex]="`awk  '/'$var'_bindFunction_3/{print $3}' ../simfit/simul_param_pol_${ch}.txt`"
+Param_p4[$paramIndex]="`awk  '/'$var'_bindFunction_4/{print $3}' ../simfit/simul_param_pol_${ch}.txt`"
+Param_p5[$paramIndex]="`awk  '/'$var'_bindFunction_5/{print $3}' ../simfit/simul_param_pol_${ch}.txt`"
+Param_p6[$paramIndex]="`awk  '/'$var'_bindFunction_6/{print $3}' ../simfit/simul_param_pol_${ch}.txt`"
+
+
+FitParamStr[$paramIndex]=${Param_p0[$paramIndex]}","${Param_p1[$paramIndex]}","${Param_p2[$paramIndex]}","${Param_p3[$paramIndex]}","${Param_p4[$paramIndex]}","${Param_p5[$paramIndex]}","${Param_p6[$paramIndex]}
+
+
+echo "${var}_FitParam"
+echo "${FitParamStr[$paramIndex]}"
+
+done
+
+echo "Number of mass points = $massIndex"
+echo "Number of parameters = $paramIndex"
+
+sed -e 's|<massArray>|'$MassStr'|g' -e 's|<nArray>|'$massIndex'|g'  -e 's|<meanArray>|'${ParamStr[1]}'|g'  -e 's|<sigmaArray>|'${ParamStr[2]}'|g'  -e 's|<a1Array>|'${ParamStr[3]}'|g'  -e 's|<a2Array>|'${ParamStr[4]}'|g'  -e 's|<n1Array>|'${ParamStr[5]}'|g'  -e 's|<n2Array>|'${ParamStr[6]}'|g'  -e 's|<meanErrArray>|'${ErrStr[1]}'|g'  -e 's|<sigmaErrArray>|'${ErrStr[2]}'|g' -e 's|<a1ErrArray>|'${ErrStr[3]}'|g' -e 's|<a2ErrArray>|'${ErrStr[4]}'|g' -e 's|<n1ErrArray>|'${ErrStr[5]}'|g' -e 's|<n2ErrArray>|'${ErrStr[6]}'|g' -e 's|<channel>|'$ch'|g'  -e 's|<mean_param>|'${FitParamStr[1]}'|g' -e 's|<sigma_param>|'${FitParamStr[2]}'|g' -e 's|<a1_param>|'${FitParamStr[3]}'|g' -e 's|<a2_param>|'${FitParamStr[4]}'|g' -e 's|<n1_param>|'${FitParamStr[5]}'|g' -e 's|<n2_param>|'${FitParamStr[6]}'|g'  < plotVar_fitSim_tmpl.C  > ../scripts/plotVar_fitSim_${ch}.C
+
+done
+

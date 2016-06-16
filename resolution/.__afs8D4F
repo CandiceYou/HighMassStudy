@@ -1,0 +1,53 @@
+dir="160615"
+<<comment
+for subdir in fix simfit params scripts single 
+do
+mkdir ../$subdir
+done
+rm ../params/individual_fit_param.txt
+mkdir ~/www/HighMass/$dir/
+cp ~/www/index.php ~/www/HighMass/$dir/
+comment
+
+for ch in {2e2mu,4e,4mu}
+
+do
+
+root -l -n -q -b 'readData.cc("4e")' 'indfit.cc("4e")'
+#root -l -n -q -b \'readData.cc(\"$ch\")\' \'indfit.cc(\"$ch\")\'
+#bash readParam_single.sh $ch
+#root -l -n -b -q "../scripts/plotVar_fitInd_$ch.C" 
+#bash readParam_ind.sh $ch
+#root -l -n -q -b \'readData.cc(\"$ch\")\' \'simfit.cc(\"$ch\")\'
+
+done
+
+<<comment
+#single mass fitting
+root -l -n -q -b 'readData.cc("4e")' 'indfit.cc("4e")'
+root -l -n -q -b 'readData.cc("4mu")' 'indfit.cc("4mu")'
+root -l -n -q -b 'readData.cc("2e2mu")' 'indfit.cc("2e2mu")'
+#cp ../single/*.png ~/www/HighMass/$dir/
+
+bash readParam_single.sh
+
+root -l -n -b -q "../scripts/plotVar_fitInd_4mu.C" > ../params/out_indiFit_4mu.txt
+root -l -n -b -q "../scripts/plotVar_fitInd_4e.C" > ../params/out_indiFit_4e.txt
+root -l -n -b -q "../scripts/plotVar_fitInd_2e2mu.C" > ../params/out_indiFit_2e2mu.txt
+
+#cp ../params/*.png ~/www/HighMass/$dir/
+
+bash readParam_ind.sh
+
+root -l -n -q -b 'readData.cc("4e")' 'simfit.cc("4e")'
+root -l -n -q -b 'readData.cc("4mu")' 'simfit.cc("4mu")'
+root -l -n -q -b 'readData.cc("2e2mu")' 'simfit.cc("2e2mu")'
+
+#cp ../fix/*.png ~/www/HighMass/$dir/
+
+#bash readParam_sim.sh
+
+#root -l -n -b -q "../scripts/plotVar_fitSim_4mu.C" 
+#root -l -n -b -q "../scripts/plotVar_fitSim_4e.C" 
+#root -l -n -b -q "../scripts/plotVar_fitSim_2e2mu.C"
+comment
