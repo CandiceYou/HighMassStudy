@@ -124,10 +124,12 @@ using namespace RooFit;
   RooArgSet ntupleVarSet(x,w,massrc);
   RooDataSet dataset("resoM","resoM",ntupleVarSet,WeightVar("myW"));
 
-//  TString inputDir = "root://lxcms03://data3/Higgs/160225/";
-//  TString  inputDir = "/afs/cern.ch/work/c/cayou/HighMass_RunII/CMSSW_7_6_3/src/ZZAnalysis/AnalysisStep/test/CombInputs/";
-//  TString  inputDir = "/afs/cern.ch/work/c/cayou/HighMass_RunII/CMSSW_8_0_9/src/ZZAnalysis/AnalysisStep/test/prod/";
-  TString  inputDir = "/afs/cern.ch/user/w/wqin/CMSSW_8_0_7/src/ZZAnalysis/AnalysisStep/test/prod/";
+
+	char dest[PATH_MAX];
+	sprintf(dest, "%s", gSystem->pwd());
+	char * pchar = strstr(dest, "prod");
+	strcpy(pchar, "prod/\0");
+	TString inputDir = dest;
 
   vector<TString> files;
 
@@ -135,7 +137,7 @@ using namespace RooFit;
   for (int i=0; i<Nfiles; i++) {
 //    sprintf(inputfile,"gen_ggH_noCut/mytree/PT13TeV/ggH%d/ZZ4lAnalysis.root",inputfiles[i]);
 //    sprintf(inputfile,"ggH_spin0_rw/mytree/PT13TeV/ggH%d/ZZ4lAnalysis.root",inputfiles[i]);
-     sprintf(inputfile,"wqin_test/mytree/PT13TeV/ggH_zz2l2q_M%d/ZZ2l2qAnalysis.root",inputfiles[i]);
+     sprintf(inputfile,"wqin_test/my_tree/PT13TeV/ggH_zz2l2q_M%d/ZZ2l2qAnalysis.root",inputfiles[i]);
     files.push_back(inputfile);
   }
 
