@@ -112,9 +112,9 @@ void simfit(char* channel="4e"){
     RooArgSet * params2 = rs.getParameters(RooArgList(x,massrc));
     char paramfilename[100];
     if (fixParam==true)
-    sprintf(paramfilename,"fixParamFit/fix_param_%s.txt",channel);
+    sprintf(paramfilename,"fixParamFit/fix_param_%s_%s.txt",channel,cType);
     else
-    sprintf(paramfilename,"simfit/simfit_param_%s.txt",channel);
+    sprintf(paramfilename,"simfit/simfit_param_%s_%s.txt",channel,cType);
     params2->writeToFile(paramfilename) ;
 
   for (int i=0; i<maxMassBin; i++) {
@@ -130,12 +130,13 @@ void simfit(char* channel="4e"){
     TPad *pad2 = new TPad("pad2","pull",0.05,0.02,0.95,0.35);
     pad2->Draw();
     int col;
-    if(channel =="4mu") col=kOrange+7;
-    if(channel =="4e") col=kAzure+2;
-    if(channel =="2e2mu") col=kGreen+3;
+    if (strcmp(channel,"4mu")==0) col=kOrange+7;
+    if (strcmp(channel,"4e")==0) col=kAzure+2;
+    if (strcmp(channel,"2e2mu")==0) col=kGreen+3;
+    if (strcmp(channel,"2l2q")==0) col=kRed+3;
 
     char framename[100];
-    sprintf(framename,"Resolution_MH%dGeV_%s",massBin[i],channel);
+    sprintf(framename,"Resolution_MH%dGeV_%s_%s",massBin[i],channel,cType);
     RooPlot* xframe = x.frame(Range(xMin[i],xMax[i]),Bins(100),Title(framename)) ;
     xframe->GetYaxis()->SetTitleOffset(1.5);
 
@@ -155,9 +156,9 @@ void simfit(char* channel="4e"){
     frame2->SetMaximum(10);
     char filename[100];
     if (fixParam==true)
-    sprintf(filename,"fixParamFit/Resolution_MH%d_%s_fixParam.png",massBin[i],channel);
+    sprintf(filename,"fixParamFit/Resolution_MH%d_%s_%s_fixParam.png",massBin[i],channel,cType);
     else
-    sprintf(filename,"simfit/Resolution_MH%d_%s_simfit.png",massBin[i],channel);
+    sprintf(filename,"simfit/Resolution_MH%d_%s_%s_simfit.png",massBin[i],channel,cType);
     c1->SaveAs(filename);
     }
  } 
