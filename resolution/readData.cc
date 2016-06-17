@@ -14,16 +14,10 @@ void readData(char* channel="4e")
       width[i] = -3.28297+0.0153095*(massBin[i])+2.09897e-06*(massBin[i])*(massBin[i]);
     else if(strcmp(channel,"2l2q")==0){
       width[i] = -4.58023+0.0191778*(massBin[i])+3.74327e-06*(massBin[i])*(massBin[i]);
-      cout << "it works" << endl;
     }
-    cout << "Mass:  " << massBin[i] << endl;
-    cout << "Channel:  " << channel << endl;
-
     xMin[i] = width[i]*(-30);
     xMax[i] = width[i]*(25);
   }
-
-  cout << "Width:  " << width[0] << endl;
 
   if (ZZCandType == 1)
     sprintf(cType,"J");
@@ -77,7 +71,7 @@ void readData(char* channel="4e")
            ntupleVarSet.setRealValue("reso",(m4l->at(w))-genM);
            ntupleVarSet.setRealValue("myW",PUWeight*genHEPMCweight);	
 //           ntupleVarSet.setRealValue("myW",weight*(wt->at(7)));
-           if(((zzsel->at(w))>=100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-50)&&genM<(massBin[i]+50))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
+           if(((zzsel->at(w))>=100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
 //for(auto && zz : zzsel)
 //      if((zz>=100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
              dataset->add(ntupleVarSet, PUWeight*genHEPMCweight);
