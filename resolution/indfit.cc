@@ -2,7 +2,7 @@ void indfit(char* channel="4e"){
   for (int i=0; i<maxMassBin; i++) {
     char formulamass[200];
 
-    mean_ind[i]= new RooRealVar("mean_CB","mean_CB",0.,-50., 1.) ;
+    mean_ind[i]= new RooRealVar("mean_CB","mean_CB",0.,-50., 50.) ;
     sigma_ind[i]= new RooRealVar("sigma_CB","sigma_CB",1, 0, 500);
     a1_ind[i]= new RooRealVar("a1_CB","a1_CB", 1., 0, 5.);
     n1_ind[i]= new RooRealVar("n1_CB","n1_CB", 1., 0, 5.);
@@ -29,10 +29,10 @@ void indfit(char* channel="4e"){
     pad2->Draw();
 
     int col;
-    if(channel =="4mu") col=kOrange+7;
-    if(channel =="4e") col=kAzure+2;
-    if(channel =="2e2mu") col=kGreen+3;
-    if(channel =="2l2q") col=kRed+3;
+    if (strcmp(channel,"4mu")==0) col=kOrange+7;
+    if (strcmp(channel,"4e")==0) col=kAzure+2;
+    if (strcmp(channel,"2e2mu")==0) col=kGreen+3;
+    if (strcmp(channel,"2l2q")==0) col=kRed+3;
 
     char framename[100];
     sprintf(framename,"Resolution_MH%dGeV_%s_%s",massBin[i],channel,cType);

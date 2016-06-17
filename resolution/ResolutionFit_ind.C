@@ -99,8 +99,6 @@ using namespace RooFit;
   RooRealVar w("myW","myW",1.0,-2000.,1500.);
   RooCategory massrc("massrc","massrc");
 
-  cout << "Channel:  " << channel << endl;
-
   for (int i=0; i<maxMassBin; i++) {
     sprintf(tempmass,"mh%d",massBin[i]);
     massrc.defineType(tempmass,massBin[i]);
@@ -288,7 +286,7 @@ using namespace RooFit;
 
      int MassBin[] ={750};
      int Inputfiles[]={750};
-     short ZZCandType=2; //1 for merged jet (J), 2 for two resolved jets (jj)
+     short ZZCandType=1; //1 for merged jet (J), 2 for two resolved jets (jj)
      int Nbins=sizeof(MassBin)/sizeof(*MassBin);
      int NFiles=sizeof(Inputfiles)/sizeof(*Inputfiles);
 

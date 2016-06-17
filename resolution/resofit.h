@@ -98,7 +98,8 @@ using namespace RooFit;
 //  char * pchar = strstr(dest, "prod");
 //  strcpy(pchar, "prod/\0");
 //  TString inputDir = dest;
- 
+  
+  char channel[100]; 
   int massBin[]={750};
   int inputfiles[]={750};
   short ZZCandType=2; //1 for merged jet (J), 2 for two resolved jets (jj)
