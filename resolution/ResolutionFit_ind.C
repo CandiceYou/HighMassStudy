@@ -141,7 +141,7 @@ using namespace RooFit;
   for (int i=0; i<Nfiles; i++) {
 //    sprintf(inputfile,"gen_ggH_noCut/mytree/PT13TeV/ggH%d/ZZ4lAnalysis.root",inputfiles[i]);
 //    sprintf(inputfile,"ggH_spin0_rw/mytree/PT13TeV/ggH%d/ZZ4lAnalysis.root",inputfiles[i]);
-     sprintf(inputfile,"wqin_test/mytree/PT13TeV/ggH_zz2l2q_M%d/ZZ2l2qAnalysis.root",inputfiles[i]);
+     sprintf(inputfile,"wqin_test2/mytree/PT13TeV/ggH_zz2l2q_M%d/ZZ2l2qAnalysis.root",inputfiles[i]);
     files.push_back(inputfile);
   }
 
@@ -284,8 +284,8 @@ using namespace RooFit;
 //     int MassBin[] ={750,800,1200,2000,3000,4000};
 //     int Inputfiles[]={750,800,1200,2000,3000,4000};
 
-     int MassBin[] ={1000};
-     int Inputfiles[]={1000};
+     int MassBin[] ={750};
+     int Inputfiles[]={750};
      short ZZCandType=2; //1 for merged jet (J), 2 for two resolved jets (jj)
      int Nbins=sizeof(MassBin)/sizeof(*MassBin);
      int NFiles=sizeof(Inputfiles)/sizeof(*Inputfiles);

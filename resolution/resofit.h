@@ -56,12 +56,17 @@ using namespace RooFit;
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <vector>
 
 
-  float m4l,genM,pm,Z1Mass,Z2Mass;
-  std::vector<float> *wt=0;
-  Short_t z1flav, z2flav,zzsel;
-  float weight;
+//  float m4l,genM,pm,Z1Mass,Z2Mass;
+  vector<float> *m4l=0,*Z1Mass=0,*Z2Mass=0;
+  float genM;
+  vector<float> *wt=0;
+  vector<Short_t> *z1flav=0,*z2flav=0,*zzsel=0,*candType=0;
+//  Short_t z1flav, z2flav,zzsel;
+  float weight = 0,PUWeight=0,genHEPMCweight=0;
+  char cType[10];
   char tempmass[100];
   char tempmass2[100];
   double width[100];
@@ -87,9 +92,16 @@ using namespace RooFit;
   RooRealVar* n2_ind[100];
   RooFitResult* fitres[100];
 
-  TString  inputDir = "/afs/cern.ch/user/w/wqin/CMSSW_8_0_3/src/ZZAnalysis/AnalysisStep/test/prod/";
-  int massBin[]={750,800};
-  int inputfiles[]={750,800};
+  TString  inputDir = "/afs/cern.ch/user/w/wqin/CMSSW_8_0_7/src/ZZAnalysis/AnalysisStep/test/prod/";
+//  char dest[PATH_MAX];
+//  sprintf(dest, "%s", gSystem->pwd());
+//  char * pchar = strstr(dest, "prod");
+//  strcpy(pchar, "prod/\0");
+//  TString inputDir = dest;
+ 
+  int massBin[]={750};
+  int inputfiles[]={750};
+  short ZZCandType=2; //1 for merged jet (J), 2 for two resolved jets (jj)
   int maxMassBin=sizeof(massBin)/sizeof(*massBin);;
   int Nfiles=sizeof(inputfiles)/sizeof(*inputfiles);
 

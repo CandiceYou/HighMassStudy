@@ -19,7 +19,7 @@ void indfit(char* channel="4e"){
 //    fitres[i] = (RooFitResult*)DCBall[i]->fitTo(*dataset_sub[i],SumW2Error(1),Range(xMin[i],xMax[i]),Strategy(2),NumCPU(8),Save(true));
     RooArgSet * params = DCBall[i]->getParameters(x);
     char paramfilename[100];
-    sprintf(paramfilename,"singleMassFit/SingleMassFit_ResoParam_MH%d_%s.txt",massBin[i],channel);
+    sprintf(paramfilename,"singleMassFit/SingleMassFit_ResoParam_MH%d_%s_%s.txt",massBin[i],channel,cType);
     params->writeToFile(paramfilename) ;
 
     TCanvas *c1 = new TCanvas("c1","c1",725,725);
@@ -32,9 +32,10 @@ void indfit(char* channel="4e"){
     if(channel =="4mu") col=kOrange+7;
     if(channel =="4e") col=kAzure+2;
     if(channel =="2e2mu") col=kGreen+3;
+    if(channel =="2l2q") col=kRed+3;
 
     char framename[100];
-    sprintf(framename,"Resolution_MH%dGeV_%s",massBin[i],channel);
+    sprintf(framename,"Resolution_MH%dGeV_%s_%s",massBin[i],channel,cType);
 
     RooPlot* xframe = x.frame(Range(xMin[i],xMax[i]),Bins(100),Title(framename)) ;
     xframe->GetYaxis()->SetTitleOffset(1.5);
@@ -53,7 +54,7 @@ void indfit(char* channel="4e"){
     frame2->SetMinimum(-10);
     frame2->SetMaximum(10);
     char filename[100];
-    sprintf(filename,"singleMassFit/Resolution_MH%d_%s_singleMassFit.png",massBin[i],channel);
+    sprintf(filename,"singleMassFit/Resolution_MH%d_%s_%s_singleMassFit.png",massBin[i],channel,cType);
     c1->SaveAs(filename);
     }
 }
