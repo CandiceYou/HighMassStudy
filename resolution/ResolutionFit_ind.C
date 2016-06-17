@@ -99,6 +99,8 @@ using namespace RooFit;
   RooRealVar w("myW","myW",1.0,-2000.,1500.);
   RooCategory massrc("massrc","massrc");
 
+  cout << "Channel:  " << channel << endl;
+
   for (int i=0; i<maxMassBin; i++) {
     sprintf(tempmass,"mh%d",massBin[i]);
     massrc.defineType(tempmass,massBin[i]);

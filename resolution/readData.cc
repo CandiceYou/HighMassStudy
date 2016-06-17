@@ -1,18 +1,25 @@
 #include "resofit.h"
 #include "style.cc"
-void  readData(char* channel="4e")                            
+void  readData(char* channel="4e")
  {
+  cout << "Channel:  " << channel << endl;
+
   for (int i=0; i<maxMassBin; i++) {
     sprintf(tempmass,"mh%d",massBin[i]);
     massrc.defineType(tempmass,massBin[i]);
 
-  if(channel=="4e") width[i] = 1.9891+0.00554202*(massBin[i])+3.83558e-07*(massBin[i])*(massBin[i]);
-  else if(channel=="4mu") width[i] = -4.58023+0.0191778*(massBin[i])+3.74327e-06*(massBin[i])*(massBin[i]);
-  else if(channel=="2e2mu") width[i] = -3.28297+0.0153095*(massBin[i])+2.09897e-06*(massBin[i])*(massBin[i]);
-  else if(channel=="2l2q") width[i] = -4.58023+0.0191778*(massBin[i])+3.74327e-06*(massBin[i])*(massBin[i]);
-  xMin[i] = width[i]*(-30);
-  xMax[i] = width[i]*(25);
+    if(channel=="4e") width[i] = 1.9891+0.00554202*(massBin[i])+3.83558e-07*(massBin[i])*(massBin[i]);
+    else if(channel=="4mu") width[i] = -4.58023+0.0191778*(massBin[i])+3.74327e-06*(massBin[i])*(massBin[i]);
+    else if(channel=="2e2mu") width[i] = -3.28297+0.0153095*(massBin[i])+2.09897e-06*(massBin[i])*(massBin[i]);
+    else if(channel=="2l2q") {
+      width[i] = -4.58023+0.0191778*(massBin[i])+3.74327e-06*(massBin[i])*(massBin[i]);
+      cout << "it works" << endl;
+    }
+    xMin[i] = width[i]*(-30);
+    xMax[i] = width[i]*(25);
   }
+
+  cout << "Width:  " << width[0] << endl;
 
   if (ZZCandType == 1)
     sprintf(cType,"J");
@@ -64,11 +71,12 @@ void  readData(char* channel="4e")
          for (int i=0; i<maxMassBin; i++) {
            ntupleVarSet.setCatIndex("massrc",massBin[i]);
            ntupleVarSet.setRealValue("reso",(m4l->at(w))-genM);
-           ntupleVarSet.setRealValue("myW",PUWeight*genHEPMCweight);
+           ntupleVarSet.setRealValue("myW",PUWeight*genHEPMCweight);	
 //           ntupleVarSet.setRealValue("myW",weight*(wt->at(7)));
            if(((zzsel->at(w))>=100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-50)&&genM<(massBin[i]+50))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
 //for(auto && zz : zzsel)
 //      if((zz>=100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
+		cout << endl << "pls work" << endl;
              dataset->add(ntupleVarSet, weight);
 //             dataset.add(ntupleVarSet, weight*(wt->at(7)));
 
