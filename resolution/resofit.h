@@ -100,8 +100,8 @@ using namespace RooFit;
 //  TString inputDir = dest;
   
   char channel[100]; 
-  int massBin[]={2000};
-  int inputfiles[]={2000};
+  int massBin[]={600,750,1000,2000};
+  int inputfiles[]={600,750,1000,2000};
   short ZZCandType=2; //1 for merged jet (J), 2 for two resolved jets (jj)
   int maxMassBin=sizeof(massBin)/sizeof(*massBin);;
   int Nfiles=sizeof(inputfiles)/sizeof(*inputfiles);
