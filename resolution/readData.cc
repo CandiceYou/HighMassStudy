@@ -75,7 +75,6 @@ void readData(char* channel="4e")
 //           if(((zzsel->at(w))>=100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
 //for(auto && zz : zzsel)
 //      if((zz>=100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
-             cout << "Z1Mass:  " << Z1Mass->at(w) << endl;
              dataset->add(ntupleVarSet, PUWeight*genHEPMCweight);
 //             dataset.add(ntupleVarSet, weight*(wt->at(7)));
 
