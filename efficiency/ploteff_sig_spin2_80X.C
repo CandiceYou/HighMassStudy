@@ -76,10 +76,10 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
  sprintf(recoCut,"(GenHMass<=PoleMass && genFinalState==%d && ZZsel>=100)*(genHEPMCweight*PUWeight*dataMCWeight)",ch,zzflav);
   }
  else{
- sprintf(genCut,"(genFinalState==%d)*(genHEPMCweight*PUWeight)",ch);
+ sprintf(genCut,"(genFinalState==%d)*(genHEPMCweight*PUWeight)&&(ZZCandType==2)",ch);
 // sprintf(genCut,"(GenHMass<=PoleMass && genFinalState==%d)*(genHEPMCweight*PUWeight)",ch);
 // sprintf(recoCut,"(GenHMass<=PoleMass && genFinalState==%d && ZZsel>=100 && Z1Flav*Z2Flav == %d && ZZ_pass_ID==1 && ZZ_pass_ISO==1 && ZZ_pass_SIP==1 && Z1Mass>40 && Z1Mass<120 && Z2Mass>4 && Z2Mass<120 && ZZMass >100 )*(genHEPMCweight*PUWeight*dataMCWeight*wt_2bp)",ch,zzflav);
- sprintf(recoCut,"(genFinalState==%d && ZZsel>=100)*(genHEPMCweight*PUWeight*dataMCWeight)",ch,zzflav);
+ sprintf(recoCut,"(genFinalState==%d && ZZsel>=100)*(genHEPMCweight*PUWeight)&&(ZZCandType==2)",ch,zzflav);
 // sprintf(recoCut,"(GenHMass<=PoleMass && genFinalState==%d && ZZsel>=100)*(genHEPMCweight*PUWeight*dataMCWeight)",ch,zzflav);
   }
  candTree->Draw("GenHMass>>hgen",genCut);
@@ -255,6 +255,6 @@ void ploteff_sig_spin2_80X(){
 
 
   c2->Update();
-  c2->SaveAs(resolve + "efficiency_test.png");
-  c2->SaveAs(resolve + "efficiency_test.pdf");
+  c2->SaveAs(resolve + "efficiency_test_2.png");
+  c2->SaveAs(resolve + "efficiency_test_2.pdf");
 }
