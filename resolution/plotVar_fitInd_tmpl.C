@@ -40,6 +40,7 @@ TGraphErrors* makegr(int n=1,double x[]={0},double y[]={0},double ex[]={0},doubl
   gr->GetYaxis()->SetTitle(ytitle);
   fit->SetLineColor(lineColor);  
   gr->Fit("fit");
+//  gr->Fit("pol2");
   TCanvas* c = new TCanvas("c", "c", 1000, 10, 800, 800);
   c->cd();
   gr->SetMarkerStyle(4);

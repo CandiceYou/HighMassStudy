@@ -5,7 +5,7 @@ void indfit(char* channel="4e"){
     mean_ind[i]= new RooRealVar("mean_CB","mean_CB",0.,-50., 50.) ;
     sigma_ind[i]= new RooRealVar("sigma_CB","sigma_CB",1, 0, 500);
     a1_ind[i]= new RooRealVar("a1_CB","a1_CB", 1., 0, 5.);
-    n1_ind[i]= new RooRealVar("n1_CB","n1_CB", 1., 0, 5.);
+    n1_ind[i]= new RooRealVar("n1_CB","n1_CB", 1., 0, 50.);
     a2_ind[i]= new RooRealVar("a2_CB","a2_CB", 1., 0, 5.);
     n2_ind[i]= new RooRealVar("n2_CB","n2_CB", 1., 0, 20.);
 

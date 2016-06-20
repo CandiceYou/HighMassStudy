@@ -33,7 +33,7 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
 
 //  int inputfiles_ggH[]={115,120,124,125,126,130,135,140,145,150,155,160,165,170,175,180,190,210,230,250,270,300,350,400,450,500,550,600,700,800,900,1000,1500,2000,/*2500,*/3000};
 //  int inputfiles_ggH[]={750,800,1200,2000,3000,4000};
-  int inputfiles_ggH[]={1000};
+  int inputfiles_ggH[]={600,750,1000,2000};
 //debug
 //  int inputfiles_ggH[]={1000};
   int Nfiles_ggH=sizeof(inputfiles_ggH)/sizeof(*inputfiles_ggH);
@@ -43,12 +43,12 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
    for (int i=0; i<Nfiles_ggH; i++) {
   //   sprintf(inputfile,"gen_ggH_noCut/mytree/PT13TeV/ggH%d/ZZ4lAnalysis.root",inputfiles_ggH[i]);
   //   sprintf(inputfile,"data/sample_rw2bp/ggH%d_ZZ4lAnalysis_addwt.root",inputfiles_ggH[i]);
-     sprintf(inputfile,"wqin_test/mytree/PT13TeV/ggH_zz2l2q_M%d/ZZ2l2qAnalysis.root",inputfiles_ggH[i]);
+     sprintf(inputfile,"wqin_test2/mytree/PT13TeV/ggH_zz2l2q_M%d/ZZ2l2qAnalysis.root",inputfiles_ggH[i]);
      files_ggH.push_back(inputfile);
    }
 
 
-  TChain *candTree = new TChain("candTree");
+  TChain *candTree = new TChain("ZZTree/candTree");
 
   for (vector<TString>::const_iterator file = files_ggH.begin(); file!=files_ggH.end(); ++file) 
   candTree->Add(inputDir+(*file));
@@ -76,10 +76,11 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
  sprintf(recoCut,"(GenHMass<=PoleMass && genFinalState==%d && ZZsel>=100)*(genHEPMCweight*PUWeight*dataMCWeight)",ch,zzflav);
   }
  else{
- sprintf(genCut,"(genFinalState==%d)*(genHEPMCweight*PUWeight)",ch);
+ sprintf(genCut,"(ZZCandType==2)*(genFinalState==%d)*(genHEPMCweight*PUWeight)",ch);
 // sprintf(genCut,"(GenHMass<=PoleMass && genFinalState==%d)*(genHEPMCweight*PUWeight)",ch);
 // sprintf(recoCut,"(GenHMass<=PoleMass && genFinalState==%d && ZZsel>=100 && Z1Flav*Z2Flav == %d && ZZ_pass_ID==1 && ZZ_pass_ISO==1 && ZZ_pass_SIP==1 && Z1Mass>40 && Z1Mass<120 && Z2Mass>4 && Z2Mass<120 && ZZMass >100 )*(genHEPMCweight*PUWeight*dataMCWeight*wt_2bp)",ch,zzflav);
- sprintf(recoCut,"(genFinalState==%d && ZZsel>=100)*(genHEPMCweight*PUWeight*dataMCWeight)",ch,zzflav);
+// sprintf(recoCut,"(genFinalState==%d && ZZsel>=100)*(genHEPMCweight*PUWeight*dataMCWeight)",ch,zzflav);
+ sprintf(recoCut,"(ZZCandType==2)*(genFinalState==%d && ZZsel>=100)*(genHEPMCweight*PUWeight)",ch,zzflav);
 // sprintf(recoCut,"(GenHMass<=PoleMass && genFinalState==%d && ZZsel>=100)*(genHEPMCweight*PUWeight*dataMCWeight)",ch,zzflav);
   }
  candTree->Draw("GenHMass>>hgen",genCut);
@@ -95,11 +96,11 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
 // const Int_t n=71;
 // double M[n]={115,120,124,125,126,130,135,140,145,150,155,160,165,170,175,180,190,200,210,230,250,270,300,350,400,450,500,550,600,650,700,750,800,850,900,950,1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500,1550,1600,1650,1700,1750,1800,1850,1900,1950,2000,2050,2100,2150,2200,2250,2300,2350,2400,2450,2500,2550,2600,2650,2700/*,2750,2800,2850,2900,2950*/};
 
-// const Int_t n=6;
-// double M[n]={750,800,1200,2000,3000,4000};
+ const Int_t n=4;
+ double M[n]={600,750,1000,2000};
 
-  const Int_t n=1;
-  double M[n]={1000};
+//  const Int_t n=1;
+//  double M[n]={1000};
 
 //debug
 // const Int_t n=10;
@@ -117,6 +118,7 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
  M_raw[bin-1] = hreco->GetXaxis()->GetBinCenter(bin);
  gen_raw[bin-1] = hgen->GetBinContent(bin);
  reco_raw[bin-1] = hreco->GetBinContent(bin);}
+
 cout<<"spin="<<spin<<",ch="<<ch<<endl;
  for (int i=0;i<n;i++){
   mass = M[i];
@@ -198,7 +200,7 @@ void ploteff_sig_spin2_80X(){
   //TGraphErrors* spin2_4mu = makegr(2,0,kRed+2,24,2);
   //TGraphErrors* spin2_4e = makegr(2,1,kGreen+2,24,2);
   //TGraphErrors* spin2_2e2mu = makegr(2,2,kBlue+2,24,2);
-  TGraphErrors* ggH_2l2q = makegr(2,3,kViolet,24,2);
+  TGraphErrors* ggH_2l2q = makegr(2,99,kViolet,24,2);
 
   //mg->Add(ggH_4e);
   //mg->Add(ggH_4mu);
@@ -236,7 +238,7 @@ void ploteff_sig_spin2_80X(){
 
     char * pchar = strstr(dest, "/w/wqin");
     if(pchar != 0)
-    strcpy(pchar, "/w/wqin/www/Resolutions/\0");
+    strcpy(pchar, "/w/wqin/www/\0");
 
 	pchar = strstr(dest, "/r/rbarr");
     if(pchar != 0)

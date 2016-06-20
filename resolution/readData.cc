@@ -13,7 +13,7 @@ void readData(char* channel="4e")
     else if(strcmp(channel,"2e2mu")==0)
       width[i] = -3.28297+0.0153095*(massBin[i])+2.09897e-06*(massBin[i])*(massBin[i]);
     else if(strcmp(channel,"2l2q")==0){
-      width[i] = -4.58023+0.0191778*(massBin[i])+3.74327e-06*(massBin[i])*(massBin[i]);
+      width[i] = 3.21246+0.0312538*(massBin[i])-7.29127e-07*(massBin[i])*(massBin[i]);
     }
     xMin[i] = width[i]*(-30);
     xMax[i] = width[i]*(25);
@@ -42,7 +42,7 @@ void readData(char* channel="4e")
     int  nentries = candTree->GetEntries();
 
     //--- ggTree part
-    candTree->SetBranchAddress("ZZMass",&m4l);
+    candTree->SetBranchAddress("ZZMassRefit",&m4l);
     candTree->SetBranchAddress("GenHMass",&genM);
     candTree->SetBranchAddress("Z1Flav",&z1flav);
     candTree->SetBranchAddress("Z2Flav",&z2flav);
@@ -71,11 +71,12 @@ void readData(char* channel="4e")
            ntupleVarSet.setRealValue("reso",(m4l->at(w))-genM);
            ntupleVarSet.setRealValue("myW",PUWeight*genHEPMCweight);	
 //           ntupleVarSet.setRealValue("myW",weight*(wt->at(7)));
-           if((((Z1Mass->at(w))>70)&&((Z1Mass->at(w))<105)) && ((zzsel->at(w))>=100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
-//           if(((zzsel->at(w))>=100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
+//           if((((Z1Mass->at(w))>70)&&((Z1Mass->at(w))<105)) && ((zzsel->at(w))>=100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
+           if(((zzsel->at(w))>=100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
 //for(auto && zz : zzsel)
 //      if((zz>=100 && x.getVal()>xMin[i] && x.getVal()<xMax[i])&&((massBin[i]<1000&&genM>(massBin[i]-5)&&genM<(massBin[i]+5))||(massBin[i]>=1000&&genM>(massBin[i]*0.95)&&genM<(massBin[i]*1.05))))
-             dataset->add(ntupleVarSet, PUWeight*genHEPMCweight);
+//             if ((massBin[i]!=2000)||((massBin[i]==2000)&&(((m4l->at(w))-genM)>-500)))
+               dataset->add(ntupleVarSet, PUWeight*genHEPMCweight);
 //             dataset.add(ntupleVarSet, weight*(wt->at(7)));
 
         }
