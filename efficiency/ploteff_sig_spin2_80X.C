@@ -43,7 +43,7 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
    for (int i=0; i<Nfiles_ggH; i++) {
   //   sprintf(inputfile,"gen_ggH_noCut/mytree/PT13TeV/ggH%d/ZZ4lAnalysis.root",inputfiles_ggH[i]);
   //   sprintf(inputfile,"data/sample_rw2bp/ggH%d_ZZ4lAnalysis_addwt.root",inputfiles_ggH[i]);
-     sprintf(inputfile,"wqin_test/mytree/PT13TeV/ggH_zz2l2q_M%d/ZZ2l2qAnalysis.root",inputfiles_ggH[i]);
+     sprintf(inputfile,"wqin_test2/mytree/PT13TeV/ggH_zz2l2q_M%d/ZZ2l2qAnalysis.root",inputfiles_ggH[i]);
      files_ggH.push_back(inputfile);
    }
 
@@ -73,13 +73,13 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
  sprintf(genCut,"(GenHMass<=PoleMass && genFinalState==%d)*(genHEPMCweight*PUWeight)",ch);
 // sprintf(genCut,"(GenHMass<=PoleMass && genFinalState==%d)*(genHEPMCweight*PUWeight)",ch);
 // sprintf(recoCut,"(GenHMass<=PoleMass && genFinalState==%d && ZZsel>=100 && Z1Flav*Z2Flav == %d && ZZ_pass_ID==1 && ZZ_pass_ISO==1 && ZZ_pass_SIP==1 && Z1Mass>40 && Z1Mass<120 && Z2Mass>4 && Z2Mass<120 && ZZMass >100 )*(genHEPMCweight*PUWeight*dataMCWeight)",ch,zzflav);
- sprintf(recoCut,"(GenHMass<=PoleMass && genFinalState==%d && ZZsel>=100)*(genHEPMCweight*PUWeight*dataMCWeight)",ch,zzflav);
+ sprintf(recoCut,"(GenHMass<=PoleMass && genFinalState==%d && ZZsel[ZZCandType-1]>=100)*(genHEPMCweight*PUWeightt)",ch,zzflav);
   }
  else{
  sprintf(genCut,"(genFinalState==%d)*(genHEPMCweight*PUWeight)&&(ZZCandType==2)",ch);
 // sprintf(genCut,"(GenHMass<=PoleMass && genFinalState==%d)*(genHEPMCweight*PUWeight)",ch);
 // sprintf(recoCut,"(GenHMass<=PoleMass && genFinalState==%d && ZZsel>=100 && Z1Flav*Z2Flav == %d && ZZ_pass_ID==1 && ZZ_pass_ISO==1 && ZZ_pass_SIP==1 && Z1Mass>40 && Z1Mass<120 && Z2Mass>4 && Z2Mass<120 && ZZMass >100 )*(genHEPMCweight*PUWeight*dataMCWeight*wt_2bp)",ch,zzflav);
- sprintf(recoCut,"(genFinalState==%d && ZZsel>=100)*(genHEPMCweight*PUWeight)&&(ZZCandType==2)",ch,zzflav);
+ sprintf(recoCut,"(genFinalState==%d && ZZsel[ZZCandType-1]>=100)*(genHEPMCweight*PUWeight)&&(ZZCandType==2)",ch,zzflav);
 // sprintf(recoCut,"(GenHMass<=PoleMass && genFinalState==%d && ZZsel>=100)*(genHEPMCweight*PUWeight*dataMCWeight)",ch,zzflav);
   }
  candTree->Draw("GenHMass>>hgen",genCut);
@@ -135,7 +135,7 @@ cout<<"spin="<<spin<<",ch="<<ch<<endl;
   for (int j=(mass-width);j<(mass+width);j++){
 	//cout<<"mass="<<mass<<endl;
   	//cout<<"gen_bin"<<i<<"="<<gen_raw[j]<<endl;
-  	cout<<"reco_bin"<<i<<"="<<reco_raw[j]<<endl;
+  	//cout<<"reco_bin"<<i<<"="<<reco_raw[j]<<endl;
        	gen[i]+=gen_raw[j];
        	reco[i]+=reco_raw[j];
    }
