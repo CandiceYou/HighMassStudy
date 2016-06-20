@@ -23,13 +23,13 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
   gStyle->SetOptStat(0000);
   gStyle->SetTitleFontSize(0.05);
 
-  TFile* f;
+	TFile* f;
 	char dest[PATH_MAX];
         sprintf(dest, "%s", gSystem->pwd());
         char * pchar = strstr(dest, "prod");
         strcpy(pchar, "prod/\0");
         TString inputDir = dest;
-// get the right directory automatically
+	// get the right directory automatically
 
 //  int inputfiles_ggH[]={115,120,124,125,126,130,135,140,145,150,155,160,165,170,175,180,190,210,230,250,270,300,350,400,450,500,550,600,700,800,900,1000,1500,2000,/*2500,*/3000};
 //  int inputfiles_ggH[]={750,800,1200,2000,3000,4000};
@@ -37,7 +37,7 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
 //debug
 //  int inputfiles_ggH[]={1000};
   int Nfiles_ggH=sizeof(inputfiles_ggH)/sizeof(*inputfiles_ggH);
-  char inputfile[100];
+  char inputfile[1000];
   vector<TString> files_ggH;
 
    for (int i=0; i<Nfiles_ggH; i++) {
@@ -65,7 +65,7 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
  case 0: zzflav=28561;  break; //4mu
  case 1: zzflav=14641;  break; //4e
  case 2: zzflav=20449;  break; //2e2mu
- default:  cout<<"channel unknown.";
+ default:  cout<<"channel unknown\t"<<ch<<endl;
  }
 
  char genCut[500],recoCut[500];
@@ -99,9 +99,6 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
  const Int_t n=4;
  double M[n]={600,750,1000,2000};
 
-//  const Int_t n=1;
-//  double M[n]={1000};
-
 //debug
 // const Int_t n=10;
 // double M[n]={150,300,450,600,750,900,1050,1200,1350,1500};
@@ -114,12 +111,14 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
  double effE[n]={0};
 
  double mass,width;
+
  for (int bin=1;bin<=m;bin++){
  M_raw[bin-1] = hreco->GetXaxis()->GetBinCenter(bin);
  gen_raw[bin-1] = hgen->GetBinContent(bin);
  reco_raw[bin-1] = hreco->GetBinContent(bin);}
 
 cout<<"spin="<<spin<<",ch="<<ch<<endl;
+
  for (int i=0;i<n;i++){
   mass = M[i];
   if(mass<=180) width=1;
@@ -131,29 +130,30 @@ cout<<"spin="<<spin<<",ch="<<ch<<endl;
   else width=250;
 //merge
   for (int j=(mass-width);j<(mass+width);j++){
-//  cout<<"mass="<<mass<<endl;
-//  cout<<"gen_bin"<<i<<"="<<gen_raw[j]<<endl;
-//  cout<<"reco_bin"<<i<<"="<<reco_raw[j]<<endl;
-       gen[i]+=gen_raw[j];
-       reco[i]+=reco_raw[j];
-      }
+	//cout<<"mass="<<mass<<endl;
+  	//cout<<"gen_bin"<<i<<"="<<gen_raw[j]<<endl;
+  	cout<<"reco_bin"<<i<<"="<<reco_raw[j]<<endl;
+       	gen[i]+=gen_raw[j];
+       	reco[i]+=reco_raw[j];
+   }
+
  genE[i]=sqrt(gen[i]);
  recoE[i]=sqrt(reco[i]);
 
-// calculate efficiency and efficiency error
- double g,l,r;
- g=gen[i];
- r=reco[i];
- l=(g-r);
- if(g!=0){
- eff[i]=r/g;
- effE[i]=sqrt(l*l*r+r*r*l)/(g*g);
- }
- else {
- eff[i]=0;
- effE[i]=0;
- }
-cout<<eff[i]<<",";
+	// calculate efficiency and efficiency error
+ 	double g,l,r;
+ 	g=gen[i];
+ 	r=reco[i];
+ 	l=(g-r);
+ 	if(g!=0){
+ 	  eff[i]=r/g;
+	  effE[i]=sqrt(l*l*r+r*r*l)/(g*g);
+	}
+	else {
+	  eff[i]=0;
+	  effE[i]=0;
+	}
+	cout<<eff[i]<<",";
 }
 
 //  TF1 *polyFunctot= new TF1("polyFunctot","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x+[10]*x*x*x)+[7]*TMath::Gaus(x,[8],[9])", 110., 3000);
