@@ -92,12 +92,11 @@ using namespace RooFit;
   RooRealVar* n2_ind[100];
   RooFitResult* fitres[100];
 
-  TString  inputDir = "/afs/cern.ch/user/w/wqin/CMSSW_8_0_7/src/ZZAnalysis/AnalysisStep/test/prod/";
-//  char dest[PATH_MAX];
-//  sprintf(dest, "%s", gSystem->pwd());
-//  char * pchar = strstr(dest, "prod");
-//  strcpy(pchar, "prod/\0");
-//  TString inputDir = dest;
+  char dest[PATH_MAX];
+  sprintf(dest, "%s", gSystem->pwd());
+  char * pchar = strstr(dest, "prod");
+  strcpy(pchar, "prod/\0");
+  TString inputDir = dest;
   
   char channel[100]; 
   int massBin[]={350,400,450,500,600,700,750,850,1000,1200,2000};
