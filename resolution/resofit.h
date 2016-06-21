@@ -103,7 +103,7 @@ using namespace RooFit;
   int massBin[]={350,400,450,500,600,700,750,850,1000,1200,2000};
   int inputfiles[]={350, 400, 450, 500, 600, 700, 750, 1000, 2000};
   short ZZCandType=1; //1 for merged jet (J), 2 for two resolved jets (jj)
-  int exclude=0; //0 for exclude nothing; 1 exclude events with one jet type; 2 exclude events with both jet types
+  int exclude=2; //0 for exclude nothing; 1 exclude events with one jet type; 2 exclude events with both jet types
   int maxMassBin=sizeof(massBin)/sizeof(*massBin);;
   int Nfiles=sizeof(inputfiles)/sizeof(*inputfiles);
 

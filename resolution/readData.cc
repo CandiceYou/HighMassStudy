@@ -93,7 +93,7 @@ void readData(char* channel="4e")
         }
         break;
       case 2:
-       if ((candType->at(0)==ZZCandType) && ((*candType).size()==1)) {
+       if (((*candType).size()==1) && (candType->at(0)==ZZCandType)) {
          for (int i=0; i<maxMassBin; i++) {
            ntupleVarSet.setCatIndex("massrc",massBin[i]);
            ntupleVarSet.setRealValue("reso",(m4l->at(0))-genM);
