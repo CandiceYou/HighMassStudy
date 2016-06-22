@@ -48,10 +48,13 @@ TGraphErrors* makegr(int n=1,double x[]={0},double y[]={0},double ex[]={0},doubl
   gr->Draw("AP");
 //  fit->Draw("same");
   c->Update();
-  char pn[50];
-  sprintf(pn,"params/indiFit_param_%s_vs_%s_<channel>.png",ytitle,xtitle);
+  char pn1[50];
+  char pn2[50]
+  sprintf(pn1,"params/indiFit_param_%s_vs_%s_<channel>.png",ytitle,xtitle);
+  sprintf(pn2,"params/indiFit_param_%s_vs_%s_<channel>.pdf",ytitle,xtitle);
 //  sprintf(pn,"param_%s_vs_%s_4mu.png",ytitle,xtitle);
-  c->SaveAs(pn);
+  c->SaveAs(pn1);
+  c->SaveAs(pn2);
 
   ofstream f;
   f.open ("params/individual_fit_param.txt",std::ofstream::out | std::ofstream::app);
@@ -137,4 +140,5 @@ TGraph* gr6 = makegr(n_MH,MH,n2,mass_err,n2_err,25,94,"doubleCB param","mass","n
   leg->Draw();
   c2->Update();
   c2->SaveAs("params/indiFit_param_all_<channel>.png");
+  c2->SaveAs("params/indiFit_param_all_<channel>.pdf");
 }

@@ -53,8 +53,11 @@ void indfit(char* channel="4e"){
     frame2->Draw() ;
     frame2->SetMinimum(-10);
     frame2->SetMaximum(10);
-    char filename[100];
-    sprintf(filename,"singleMassFit/Resolution_MH%d_%s_%s_singleMassFit.png",massBin[i],channel,cType);
-    c1->SaveAs(filename);
+    char filename1[100];
+    char filename2[100];
+    sprintf(filename1,"singleMassFit/Resolution_MH%d_%s_%s_singleMassFit.png",massBin[i],channel,cType);
+    sprintf(filename2,"singleMassFit/Resolution_MH%d_%s_%s_singleMassFit.pdf",massBin[i],channel,cType);
+    c1->SaveAs(filename1);
+    c1->SaveAs(filename2);
     }
 }
