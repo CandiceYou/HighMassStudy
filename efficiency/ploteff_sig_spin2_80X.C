@@ -36,7 +36,7 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
   int inputfiles_ggH[]={1000, 2000, 200, 250, 350, 400, 450, 500, 600, 700};
   
   int Nfiles_ggH=sizeof(inputfiles_ggH)/sizeof(*inputfiles_ggH);
-  char inputfile[1000];
+  char inputfile[PATH_MAX];
   vector<TString> files_ggH;
 
    for (int i=0; i<Nfiles_ggH; i++) {
@@ -78,24 +78,48 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
 	candTree->SetBranchAddress("genHEPMCweight",&genHEPMCweight);
 
   for (int i=0; i<candTree->GetEntries(); i++) {
-      candTree->GetEntry(i);
- 
-	  switch(exclude) {
+    candTree->GetEntry(i);
+ 	if(genFinalState!=ch) continue;
+	switch(exclude) {
 	case 0:
-		if((ZZCandType->size() == 1 || ZZCandType->size() == 2) && (genFinalState==ch) && ((ZZCandType->size()==1)? ((ZZCandType->at(0) == local_ZZCandType)) : (((ZZCandType->at(0) == local_ZZCandType) || (ZZCandType->at(1) == local_ZZCandType))) )) hgen->Fill(GenHMass,(genHEPMCweight*PUWeight));
 
-		if((ZZCandType->size() == 1 || ZZCandType->size() == 2) && (genFinalState==ch) && ((ZZCandType->size()==1)? ((ZZCandType->at(0) == local_ZZCandType)) : ((((ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100)) || ((ZZCandType->at(1) == local_ZZCandType) && (ZZsel->at(1)>=100)))) )) hreco->Fill(GenHMass,(genHEPMCweight*PUWeight));
+		if(ZZCandType->size() == 1) {
+			if(ZZCandType->at(0) == local_ZZCandType) 
+				hgen->Fill(GenHMass,(genHEPMCweight*PUWeight));
+
+			if((ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100)) 
+				hreco->Fill(GenHMass,(genHEPMCweight*PUWeight));
+		}
+
+		if(ZZCandType->size() == 2) {
+			if((ZZCandType->at(0) == local_ZZCandType) || (ZZCandType->at(1) == local_ZZCandType))
+				hgen->Fill(GenHMass,(genHEPMCweight*PUWeight));
+
+			if( ((ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100)) || ((ZZCandType->at(1) == local_ZZCandType) && (ZZsel->at(1)>=100)))
+				hreco->Fill(GenHMass,(genHEPMCweight*PUWeight));
+		}
 		break;
 	case 1:
-		if((ZZCandType->size() == 2) && ((ZZCandType->at(0) == local_ZZCandType) || (ZZCandType->at(1) == local_ZZCandType)) && (genFinalState==ch)) hgen->Fill(GenHMass,(genHEPMCweight*PUWeight));
 
-		if((ZZCandType->size() == 2) && (((ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100)) || ((ZZCandType->at(1) == local_ZZCandType) && (ZZsel->at(1)>=100))) && (genFinalState==ch)) hreco->Fill(GenHMass,(genHEPMCweight*PUWeight));
+		if(ZZCandType->size() != 2) break;
+
+		if((ZZCandType->at(0) == local_ZZCandType) || (ZZCandType->at(1) == local_ZZCandType))
+				hgen->Fill(GenHMass,(genHEPMCweight*PUWeight));
+
+		if(((ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100)) || ((ZZCandType->at(1) == local_ZZCandType) && (ZZsel->at(1)>=100)))
+			hreco->Fill(GenHMass,(genHEPMCweight*PUWeight));
 		break;
+
 	case 2:
-		if((ZZCandType->size() == 1) && (ZZCandType->at(0) == local_ZZCandType) && (genFinalState==ch)) hgen->Fill(GenHMass,(genHEPMCweight*PUWeight));
 
-		if((ZZCandType->size() == 1) && (ZZCandType->at(0) == local_ZZCandType) && (genFinalState==ch) && (ZZsel->at(0)>=100))  hreco->Fill(GenHMass,(genHEPMCweight*PUWeight));
-		break;
+		if(ZZCandType->size() != 1) break;
+		
+		if(ZZCandType->at(0) == local_ZZCandType) 
+			hgen->Fill(GenHMass,(genHEPMCweight*PUWeight));
+
+		if((ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100)) 
+			hreco->Fill(GenHMass,(genHEPMCweight*PUWeight));
+
 		}
  }
 
@@ -107,8 +131,8 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
  double reco_raw[m]={0};
 
 // bin contents of merged histograms
- const Int_t n=14;
- double M[n]={1000,1200, 1400,1600,1800, 2000, 200, 250, 350, 400, 450, 500, 600, 700};
+ double M[]={1000,1200, 1400,1600,1800, 2000, 200, 250, 350, 400, 450, 500, 600, 700};
+ Int_t n = sizeof(M)/sizeof(*M);
 
  double massE[n]={0};
  double gen[n]={0};
@@ -269,7 +293,7 @@ void ploteff_sig_spin2_80X_2(){
 }
 
 void ploteff_sig_spin2_80X() {
-	for(exclude=0;exclude<3; ++exclude)
-	for(local_ZZCandType=1;local_ZZCandType<3;++local_ZZCandType)
-	ploteff_sig_spin2_80X_2();
+	for(local_ZZCandType=1; local_ZZCandType<3;++local_ZZCandType)
+		for (exclude=0;exclude<3;++exclude)
+			ploteff_sig_spin2_80X_2();
 }
