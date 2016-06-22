@@ -80,21 +80,16 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
   for (int i=0; i<candTree->GetEntries(); i++) {
     candTree->GetEntry(i);
  	if(genFinalState!=ch) continue;
+ 	hgen->Fill(GenHMass,(genHEPMCweight*PUWeight));
 	switch(exclude) {
 	case 0:
 
 		if(ZZCandType->size() == 1) {
-			if(ZZCandType->at(0) == local_ZZCandType) 
-				hgen->Fill(GenHMass,(genHEPMCweight*PUWeight));
-
 			if((ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100)) 
 				hreco->Fill(GenHMass,(genHEPMCweight*PUWeight));
 		}
 
 		if(ZZCandType->size() == 2) {
-			if((ZZCandType->at(0) == local_ZZCandType) || (ZZCandType->at(1) == local_ZZCandType))
-				hgen->Fill(GenHMass,(genHEPMCweight*PUWeight));
-
 			if( ((ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100)) || ((ZZCandType->at(1) == local_ZZCandType) && (ZZsel->at(1)>=100)))
 				hreco->Fill(GenHMass,(genHEPMCweight*PUWeight));
 		}
@@ -103,9 +98,6 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
 
 		if(ZZCandType->size() != 2) break;
 
-		if((ZZCandType->at(0) == local_ZZCandType) || (ZZCandType->at(1) == local_ZZCandType))
-				hgen->Fill(GenHMass,(genHEPMCweight*PUWeight));
-
 		if(((ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100)) || ((ZZCandType->at(1) == local_ZZCandType) && (ZZsel->at(1)>=100)))
 			hreco->Fill(GenHMass,(genHEPMCweight*PUWeight));
 		break;
@@ -113,9 +105,6 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
 	case 2:
 
 		if(ZZCandType->size() != 1) break;
-		
-		if(ZZCandType->at(0) == local_ZZCandType) 
-			hgen->Fill(GenHMass,(genHEPMCweight*PUWeight));
 
 		if((ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100)) 
 			hreco->Fill(GenHMass,(genHEPMCweight*PUWeight));
@@ -132,7 +121,7 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
 
 // bin contents of merged histograms
  double M[]={1000,1200, 1400,1600,1800, 2000, 200, 250, 350, 400, 450, 500, 600, 700};
- Int_t n = sizeof(M)/sizeof(*M);
+ const Int_t n = sizeof(M)/sizeof(*M);
 
  double massE[n]={0};
  double gen[n]={0};
