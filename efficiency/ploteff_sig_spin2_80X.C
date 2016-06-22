@@ -33,7 +33,7 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
   strcpy(pchar, "prod/\0");
   TString inputDir = dest;
  
-  int inputfiles_ggH[]={1000, 2000, 200, 250, 350, 400, 450, 500, 600, 700};
+  int inputfiles_ggH[]={1000, 2000, 350,400, 450, 500, 600, 700};
   
   int Nfiles_ggH=sizeof(inputfiles_ggH)/sizeof(*inputfiles_ggH);
   char inputfile[PATH_MAX];
@@ -120,7 +120,7 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
  double reco_raw[m]={0};
 
 // bin contents of merged histograms
- double M[]={1000,1200, 1400,1600,1800, 2000, 200, 250, 350, 400, 450, 500, 600, 700};
+ double M[]={1000,1200, 1400,1600,1800, 2000, 350,400, 450, 500, 600, 700};
  const Int_t n = sizeof(M)/sizeof(*M);
 
  double massE[n]={0};
@@ -179,7 +179,7 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
   cout<<eff[i]<<",";
 }
 
-  TF1 *polyFunctot= new TF1("polyFunctot","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x+[10]*x*x*x)+[7]*TMath::Gaus(x,[8],[9])", 110., 4100);
+  TF1 *polyFunctot= new TF1("polyFunctot","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x+[10]*x*x*x)+[7]*TMath::Gaus(x,[8],[9])", 350, 2000);
   polyFunctot->SetParameters(-4.42749e+00,4.61212e+0,-6.21611e+01,1.13168e+02,2.14321e+00,1.04083e-03,4.89570e-07, 0.03, 200, 30,0);
   polyFunctot->SetParLimits(7,0,0.2);
   polyFunctot->SetParLimits(8,160,210);
@@ -207,7 +207,7 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
   //c->cd();
   //gr->Draw("AP"); 
   //c->SaveAs("/afs/cern.ch/user/c/cayou/www/HighMass/160309/test.png");
-  delete hreco;
+  delete hreco; delete hgen; delete polyFunctot;
   return gr;
 }
 
