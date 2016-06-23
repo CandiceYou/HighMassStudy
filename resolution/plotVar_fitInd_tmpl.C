@@ -8,6 +8,7 @@
 #include "TPaveStats.h"
 #include "RooTFnBinding.h"
 #include "fitFunction.c"
+#include "resofit.h"
 #include <fstream>
 #include <iostream>
 using namespace std;
@@ -48,10 +49,13 @@ TGraphErrors* makegr(int n=1,double x[]={0},double y[]={0},double ex[]={0},doubl
   gr->Draw("AP");
 //  fit->Draw("same");
   c->Update();
-  char pn[50];
-  sprintf(pn,"params/indiFit_param_%s_vs_%s_<channel>.png",ytitle,xtitle);
+  char pn1[50];
+  char pn2[50];
+  sprintf(pn1,"params/indiFit_param_%s_vs_%s_<channel>_%s_e%d.png",ytitle,xtitle,cType,exclude);
+  sprintf(pn2,"params/indiFit_param_%s_vs_%s_<channel>_%s_e%d.pdf",ytitle,xtitle,cType,exclude);
 //  sprintf(pn,"param_%s_vs_%s_4mu.png",ytitle,xtitle);
-  c->SaveAs(pn);
+  c->SaveAs(pn1);
+  c->SaveAs(pn2);
 
   ofstream f;
   f.open ("params/individual_fit_param.txt",std::ofstream::out | std::ofstream::app);
@@ -95,7 +99,6 @@ Double_t mass_err[n_MH]={0};
 //cout<<"MassDiff["<<i<<"]="<<MassDiff[i]<<endl;
 //}
 
-
   const int npars=7;
 
   double a1_initParam[npars]={1000,2000,0,0,0,0,0};
@@ -104,6 +107,11 @@ Double_t mass_err[n_MH]={0};
   double n2_initParam[npars]={1000,2000,0,0,0,0,0};
   double mean_initParam[npars]={1000,2000,0,0,0,0,0};
   double sigma_initParam[npars]={1000,2000,0,0,0,0,0};
+
+  if (ZZCandType == 1)
+    sprintf(cType,"J");
+  else if (ZZCandType ==2)
+    sprintf(cType,"jj");
 
 TGraph* gr1 = makegr(n_MH,MH,mean,mass_err,mean_err,20,2,"doubleCB param","mass","mean",mean_initParam);
 TGraph* gr2 = makegr(n_MH,MH,sigma,mass_err,sigma_err,21,3,"doubleCB param","mass","sigma",sigma_initParam);
@@ -136,5 +144,11 @@ TGraph* gr6 = makegr(n_MH,MH,n2,mass_err,n2_err,25,94,"doubleCB param","mass","n
   g->GetYaxis()->SetTitle("DoubleCB_param");
   leg->Draw();
   c2->Update();
-  c2->SaveAs("params/indiFit_param_all_<channel>.png");
+
+  char title1[50];
+  char title2[50];
+  sprintf(title1,"params/indiFit_param_all_<channel>_%s_e%d.png",cType,exclude);
+  sprintf(title2,"params/indiFit_param_all_<channel>_%s_e%d.pdf",cType,exclude);
+  c2->SaveAs(title1);
+  c2->SaveAs(title2);
 }

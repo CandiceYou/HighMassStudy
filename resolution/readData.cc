@@ -57,7 +57,7 @@ void readData(char* channel="4e")
 
     for(int k=0; k<nentries; k++){
       candTree->GetEvent(k);
-      if (PUWeight*genHEPMCweight <= 0 ) cout << "Warning! Negative weight events" << endl;
+//      if (PUWeight*genHEPMCweight <= 0 ) cout << "Warning! Negative weight events" << endl;
 
       switch (exclude){
       case 0:
