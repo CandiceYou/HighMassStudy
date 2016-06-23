@@ -224,7 +224,7 @@ void ploteff_sig_spin2_80X_2(){
   //TGraphErrors* spin2_4mu = makegr(2,0,kRed+2,24,2);
   //TGraphErrors* spin2_4e = makegr(2,1,kGreen+2,24,2);
   //TGraphErrors* spin2_2e2mu = makegr(2,2,kBlue+2,24,2);
-  TGraphErrors* ggH_2l2q = makegr(2,99,kViolet,24,2);
+  TGraphErrors* ggH_2l2q = makegr(0,99,kViolet,24,2);
 
   //mg->Add(ggH_4e);
   //mg->Add(ggH_4mu);
@@ -243,7 +243,7 @@ void ploteff_sig_spin2_80X_2(){
   leg3->SetFillColor(0);
   leg3->SetBorderSize(0);
   //leg3->AddEntry(ggH_4mu,"ggH->2b+ 4mu","pl");
-  //leg3->AddEntry(ggH_2e2mu,"ggH->2b+ 2e2mu","pl");
+//leg3->AddEntry(ggH_2e2mu,"ggH->2b+ 2e2mu","pl");
   //leg3->AddEntry(ggH_4e,"ggH->2b+ 4e","pl");
   leg3->AddEntry(ggH_2l2q,"ggh->2b+ 2l2q","pl");
 
@@ -282,7 +282,7 @@ void ploteff_sig_spin2_80X_2(){
 }
 
 void ploteff_sig_spin2_80X() {
-	for(local_ZZCandType=1; local_ZZCandType<3;++local_ZZCandType)
+	for(local_ZZCandType=1; local_ZZCandType<2;++local_ZZCandType)
 		for (exclude=0;exclude<3;++exclude)
 			ploteff_sig_spin2_80X_2();
 }
