@@ -157,12 +157,12 @@ void simfit(char* channel="4e"){
     char filename1[100];
     char filename2[100];
     if (fixParam==true) {
-      sprintf(filename1,"fixParamFit/Resolution_MH%d_%s_%s_fixParam.png",massBin[i],channel,cType);
-      sprintf(filename2,"fixParamFit/Resolution_MH%d_%s_%s_fixParam.pdf",massBin[i],channel,cType);
+      sprintf(filename1,"fixParamFit/Resolution_MH%d_%s_%s_e%d_fixParam.png",massBin[i],channel,cType,exclude);
+      sprintf(filename2,"fixParamFit/Resolution_MH%d_%s_%s_e%d_fixParam.pdf",massBin[i],channel,cType,exclude);
     }
     else {
-      sprintf(filename1,"simfit/Resolution_MH%d_%s_%s_simfit.png",massBin[i],channel,cType);
-      sprintf(filename2,"simfit/Resolution_MH%d_%s_%s_simfit.pdf",massBin[i],channel,cType);
+      sprintf(filename1,"simfit/Resolution_MH%d_%s_%s_e%d_simfit.png",massBin[i],channel,cType,exclude);
+      sprintf(filename2,"simfit/Resolution_MH%d_%s_%s_e%d_simfit.pdf",massBin[i],channel,cType,exclude);
     }
     c1->SaveAs(filename1);
     c1->SaveAs(filename2);

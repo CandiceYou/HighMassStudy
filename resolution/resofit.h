@@ -92,15 +92,16 @@ using namespace RooFit;
   RooRealVar* n2_ind[100];
   RooFitResult* fitres[100];
 
-  char dest[PATH_MAX];
-  sprintf(dest, "%s", gSystem->pwd());
-  char * pchar = strstr(dest, "prod");
-  strcpy(pchar, "prod/\0");
-  TString inputDir = dest;
+  TString  inputDir = "/afs/cern.ch/user/w/wqin/CMSSW_8_0_7/src/ZZAnalysis/AnalysisStep/test/prod/";
+//  char dest[PATH_MAX];
+//  sprintf(dest, "%s", gSystem->pwd());
+//  char * pchar = strstr(dest, "prod");
+//  strcpy(pchar, "prod/\0");
+//  TString inputDir = dest;
   
   char channel[100]; 
-  int massBin[]={400,450,500,550,600,700,750,800,900,1000,1500};
-  int inputfiles[]={400,450,500,550,600,700,750,800,900,1000};
+  int massBin[]={350,400,450,500,600,700,750,850,1000,1200,2000};
+  int inputfiles[]={350,400,450,500,600,700,750,1000,2000};
   short ZZCandType=1; //1 for merged jet (J), 2 for two resolved jets (jj)
   int exclude=2; //0 for exclude nothing; 1 exclude events with one jet type; 2 exclude events with both jet types
   int maxMassBin=sizeof(massBin)/sizeof(*massBin);;
