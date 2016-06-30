@@ -51,14 +51,14 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
   strcpy(pchar, "prod/\0");
   TString inputDir = dest;
  
-  int inputfiles_ggH[]={400,450,500,550,600,700,750,800,900,1000};
+  int inputfiles_ggH[]={1000,2000,400,450,500,550,600,750,800};
   
   int Nfiles_ggH=sizeof(inputfiles_ggH)/sizeof(*inputfiles_ggH);
   char inputfile[PATH_MAX];
   vector<TString> files_ggH;
 
    for (int i=0; i<Nfiles_ggH; i++) {
-   sprintf(inputfile,"2016_VBF_2l2q/mytree/PT13TeV/VBFHiggs%d/ZZ2l2qAnalysis.root",inputfiles_ggH[i]);
+   sprintf(inputfile,"2016_2l2q/mytree/PT13TeV/ggHiggs%d/ZZ2l2qAnalysis.root",inputfiles_ggH[i]);
    files_ggH.push_back(inputfile);
    }
 
@@ -248,7 +248,7 @@ case 2: // only consider unambiguous
  double reco_raw[m]={0};
 
 // bin contents of merged histograms
- double M[]={300,350,400,450,500,550,600,650,700,750,800,850,900,1000};
+ double M[]={300,350,400,450,500,550,600,650,700,750,800,850,900,1000,1100,1250,1400,1600,1800,2000};
  const Int_t n = sizeof(M)/sizeof(*M);
 
  double massE[n]={0};
@@ -307,7 +307,7 @@ case 2: // only consider unambiguous
   cout<<eff[i]<<",";
 }
 
-  TF1 *polyFunctot= new TF1("polyFunctot","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x+[10]*x*x*x)+[7]*TMath::Gaus(x,[8],[9])", 300, 1000);
+  TF1 *polyFunctot= new TF1("polyFunctot","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x+[10]*x*x*x)+[7]*TMath::Gaus(x,[8],[9])", 300, 2000);
   polyFunctot->SetParameters(-4.42749e+00,4.61212e+0,-6.21611e+01,1.13168e+02,2.14321e+00,1.04083e-03,4.89570e-07, 0.03, 200, 30,0);
   polyFunctot->SetParLimits(7,0,0.2);
   polyFunctot->SetParLimits(8,160,210);
@@ -365,7 +365,7 @@ void ploteff_sig_spin2_80X_2(){
 
   pchar = strstr(dest, "/r/rbarr");
   if(pchar != 0)
-  strcpy(pchar, "/r/rbarr/www/2l2q_VBF/June30/\0");
+  strcpy(pchar, "/r/rbarr/www/2l2q/\0");
 
   pchar = strstr(dest, "/c/cayou");
   if(pchar != 0)
@@ -383,7 +383,7 @@ void ploteff_sig_spin2_80X_2(){
     else if(tagged==1) string_tagged = "vbf-tagged";
     else if(tagged==0) string_tagged = "untagged";
 
-  sprintf(dest+strlen(dest), "vbf_efficiency_%s_%s_%s_%s", string_ZZCandType, string_channel, string_tagged, string_exclude);
+  sprintf(dest+strlen(dest), "efficiency_%s_%s_%s_%s", string_ZZCandType, string_channel, string_tagged, string_exclude);
   resolve = TString(dest);
 
 
@@ -430,7 +430,7 @@ void ploteff_sig_spin2_80X_2(){
   c2->SaveAs(resolve + ".pdf");
 }
 
-void ploteff_sig_spin2_VBF() {
+void ploteff_sig_spin2_80X() {
   for(int c:{1,2}) {           //1 for merged jet (J), 2 for two resolved jets (jj)
     local_ZZCandType=c;
     exclude=(local_ZZCandType==2)? 0:2;   //give preference to resolved jets

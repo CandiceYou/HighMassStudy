@@ -11,6 +11,7 @@
 #include "fitFunction.c"
 using namespace std;
 
+TString resolve = "/afs/cern.ch/user/r/rbarr/www/bkg/bkg_EfficiencyFit";
 
 void ploteff_bkg(){
  gStyle->SetPadLeftMargin(0.1);
@@ -23,11 +24,44 @@ void ploteff_bkg(){
 TF1 *erf1 = new TF1("erf1", "0.5*[2]*(1+TMath::Erf( (x-[0]) / ([1]*sqrt(2)) ) )*([3]*x*x+[4]*x+[5])",100.0,1000.0);
 erf1->SetParameters(118.90954335267955,27.544135827573065,9.960803718511713e-07,-0.25378550401112004,492.32846532876965,278086.23395067605);
 
-  TF1 *polyFunctot1= new TF1("polyFunctot1","[0]+[1]*x+TMath::Sin((x-[2])/[3])*TMath::Gaus(x,[4],[5])*[6]+TMath::Erf((x-[7])/[8])*([9]+[10]*x)", 100, 2000);
-  polyFunctot1->SetParameters(.12,.07/2000,0,65,700,300,.05,1.79910e+02,1.38088e-01,3.49180e-01,-2.36380e-04);
+TF1 *polyFunctot1 = new TF1("polyFunctot1","[0]+[1]*TMath::Sin((x-[2])/[3])*TMath::Gaus(x,[4],[5])+TMath::Erf((x-[6])/[7])*([8])", 100, 2000);
 
-  TF1 *polyFunctot2= new TF1("polyFunctot2","[0]+[1]*x+TMath::Sin((x-[2])/[3])*TMath::Gaus(x,[4],[5])*[6]+TMath::Erf((x-[7])/[8])*([9]+[10]*x)", 100, 2000);
-  polyFunctot2->SetParameters(.12,.07/2000,0,65,700,300,.05,1.79910e+02,1.38088e-01,3.49180e-01,-2.36380e-04);
+polyFunctot1->SetParameters(0,.1);
+polyFunctot1->SetParLimits(0,0,0.25);
+polyFunctot1->SetParameters(1,.04);
+polyFunctot1->SetParLimits(1,0,0.05);
+polyFunctot1->SetParameters(3,65);
+polyFunctot1->SetParLimits(3,50,100);
+polyFunctot1->SetParameters(4,800);
+polyFunctot1->SetParLimits(4,600,1000);
+polyFunctot1->SetParameters(5,200);
+polyFunctot1->SetParLimits(5,100,300);
+polyFunctot1->SetParameters(6,1);
+polyFunctot1->SetParLimits(6,0,0.2);
+polyFunctot1->SetParameters(7,50);
+polyFunctot1->SetParLimits(7,0,200);
+polyFunctot1->SetParameters(8,.1);
+polyFunctot1->SetParLimits(8,0,.3);
+
+
+TF1 *polyFunctot2 = new TF1("polyFunctot2","[0]+[1]*TMath::Sin((x-[2])/[3])*TMath::Gaus(x,[4],[5])+TMath::Erf((x-[6])/[7])*([8])", 100, 1000);
+
+polyFunctot2->SetParameters(0,.1);
+polyFunctot2->SetParLimits(0,0,0.25);
+polyFunctot2->SetParameters(1,.04);
+polyFunctot2->SetParLimits(1,0,0.07);
+polyFunctot2->SetParameters(3,65);
+polyFunctot2->SetParLimits(3,50,100);
+polyFunctot2->SetParameters(4,800);
+polyFunctot2->SetParLimits(4,500,1000);
+polyFunctot2->SetParameters(5,200);
+polyFunctot2->SetParLimits(5,100,300);
+polyFunctot2->SetParameters(6,1);
+polyFunctot2->SetParLimits(6,0,0.2);
+polyFunctot2->SetParameters(7,50);
+polyFunctot2->SetParLimits(7,0,200);
+polyFunctot2->SetParameters(8,.1);
+polyFunctot2->SetParLimits(8,0,.3);
 
 //  TF1 *polyFunctot3= new TF1("polyFunctot3","TMath::Erf( (x-[0])/[1])*([2]+[3]*x+[4]*x*x)+[5]+[6]*x+[7]*x*x+[8]*x*x*x", 90., 2000);
 //  polyFunctot3->SetParameters(1.79910e+02,1.38088e-01,3.49180e-01,-2.36380e-04,-5.12049e-06,5.39771e-06,-4.73109e-11,2.75448e-01,0);
@@ -240,26 +274,26 @@ f.Close();
   leg3->Draw();
 
   c2->Update();
-  c2->SaveAs("/afs/cern.ch/user/r/rbarr/www/bkg_EfficiencyFit.png");
-  c2->SaveAs("/afs/cern.ch/user/r/rbarr/www/bkg_EfficiencyFit.pdf");
+  c2->SaveAs(resolve+".png");
+  c2->SaveAs(resolve+".pdf");
 
-  TString param_txt = "/afs/cern.ch/user/r/rbarr/www/bkg_EfficiencyFit_4e.txt";
+  TString param_txt = resolve+"_4e.txt";
 
   FILE *fp = fopen(param_txt.Data(),"w");
   if (fp!=NULL) {
-    for (int i=0;i<polyFunctot->GetNpar();i++) {
-        Float_t value = polyFunctot->GetParameter(i);
+    for (int i=0;i<polyFunctot1->GetNpar();i++) {
+        Float_t value = polyFunctot1->GetParameter(i);
         fprintf(fp,"p%d\t%f\n",i,value);
      }
   }
   fclose(fp);
 
-  TString param_txt = "/afs/cern.ch/user/r/rbarr/www/bkg_EfficiencyFit_4mu.txt";
+  param_txt = resolve+"_4mu.txt";
 
-  FILE *fp = fopen(param_txt.Data(),"w");
+  fp = fopen(param_txt.Data(),"w");
   if (fp!=NULL) {
-    for (int i=0;i<polyFunctot->GetNpar();i++) {
-        Float_t value = polyFunctot->GetParameter(i);
+    for (int i=0;i<polyFunctot2->GetNpar();i++) {
+        Float_t value = polyFunctot2->GetParameter(i);
         fprintf(fp,"p%d\t%f\n",i,value);
      }
   }
