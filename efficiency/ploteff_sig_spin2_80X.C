@@ -307,11 +307,11 @@ case 2: // only consider unambiguous
   cout<<eff[i]<<",";
 }
 
-  TF1 *polyFunctot= new TF1("polyFunctot","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x+[10]*x*x*x)+[7]*TMath::Gaus(x,[8],[9])", 300, 2000);
+  TF1 *polyFunctot= new TF1("polyFunctot","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x)+[7]*TMath::Gaus(x,[8],[9])", 300, 2000);
   polyFunctot->SetParameters(-4.42749e+00,4.61212e+0,-6.21611e+01,1.13168e+02,2.14321e+00,1.04083e-03,4.89570e-07, 0.03, 200, 30,0);
   polyFunctot->SetParLimits(7,0,0.2);
-  polyFunctot->SetParLimits(8,160,210);
-  polyFunctot->SetParLimits(9,10,70);
+  polyFunctot->SetParLimits(8,700,1400);
+  polyFunctot->SetParLimits(9,10,150);
   polyFunctot->SetLineColor(color);
  
   if(spin==0)   polyFunctot->SetLineStyle(1);
@@ -372,7 +372,7 @@ void ploteff_sig_spin2_80X_2(){
   strcpy(pchar, "/c/cayou/www/HighMass/\0");
 
 
-  const char * string_ZZCandType = (local_ZZCandType==2)?"J":"jj";
+  const char * string_ZZCandType = (local_ZZCandType==2)?"jj":"J";
   const char * string_channel = (channel==121)?"eeqq":"mumuqq";
   const char * string_exclude="";
     if(exclude==2) string_exclude = "reject_ambiguous";
@@ -431,6 +431,7 @@ void ploteff_sig_spin2_80X_2(){
 }
 
 void ploteff_sig_spin2_80X() {
+
   for(int c:{1,2}) {           //1 for merged jet (J), 2 for two resolved jets (jj)
     local_ZZCandType=c;
     exclude=(local_ZZCandType==2)? 0:2;   //give preference to resolved jets
