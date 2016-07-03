@@ -1,43 +1,59 @@
-void addbr(TString filename, double Pmass){
- if (!gSystem->AccessPathName(filename)){
-   TFile *f = new TFile(filename,"update");
-   TTree *T = (TTree*)f->Get("ZZTree/candTree");
-   float pm;
-   TBranch *polemass = T->Branch("PoleMass",&pm,"PoleMass/F");
-   Long64_t nentries = T->GetEntries();
-   for (Long64_t i=0;i<nentries;i++) {
+#include <string.h>
+#include "TTreeReader.h"
+#include "TTreeReaderValue.h"
+
+
+void selective_copy(char * fname, float pm){
+  TString filename = fname;
+
+  if (gSystem->AccessPathName(filename)) return;
+
+  //open ROOT file and open candTree
+  TFile *f = new TFile(filename,"update"); //option: NEW, CREATE, RECREATE, UPDATE, or READ
+  TTree *T = (TTree*)f->Get("ZZTree/candTree");
+
+  //create a new branch
+  //F is for floating point: https://root.cern.ch/doc/master/classTBranch.html#ae30a4edb372811b4f02b485b7b0dfaca
+  TBranch *polemass = T->Branch("PoleMass",&pm,"PoleMass/F");
+  Long64_t nentries = T->GetEntries();
+
+  //setup access to GenHMass
+  float GenHMass;
+  T->SetBranchAddress("GenHMass", &GenHMass);
+
+  char * pchar = strstr(fname, ".root");
+  strcpy(pchar, "_pruned.root\0");
+  TString new_filename = fname;
+
+  TFile *newfile = new TFile(new_filename,"recreate");
+  TTree *newtree = T->CloneTree(0);
+
+  for (Long64_t i=0;i<nentries;i++) {
       T->GetEntry(i);
-      pm = Pmass;
       polemass->Fill();
-   }
-   T->Print();
-   T->Write();
-   delete f;
- }
+      if(GenHMass <= pm) {
+        newtree->Fill();
+    }
+    //else printf("Skipping branch w/ GenHMass = %d > %d\n", GenHMass, pm);
+  }
+
+  T->Print();
+  T->Write();
+  newtree->Write();
+  delete f;
+  delete newfile;
 }
 
 void addPMbranch(){
-  TString  inputDir = "/afs/cern.ch/work/c/cayou/HighMass_RunII/CMSSW_7_6_3_patch2/src/ZZAnalysis/AnalysisStep/test/prod/";
-//  int sampleMass_ggH[]={1000,1500,2000,/*2500,*/3000};
-  int sampleMass_ggH[]={1000};
-  int sampleMass_VBF[]={1000,1500,2000,2500,3000};
-//  int sampleMass_ggH[]={115,120,124,125,126,130,135,140,145,150,155,160,165,170,175,180,190,200,210,230,250,270,300,350,400,450,500,550,600,700,800,900,1000,1500,2000,/*2500,*/3000};
-//  int sampleMass_VBF[]={115,120,124,125,126,/*130,*/135,140,145,150,155,160,165,170,175,180,190,200,210,230,250,270,300,350,400,450,500,550,600,700,800,900,1000,1500,2000,2500,3000};
-  int Nfiles_ggH=sizeof(sampleMass_ggH)/sizeof(*sampleMass_ggH);
-  int Nfiles_VBF=sizeof(sampleMass_VBF)/sizeof(*sampleMass_VBF);
-  char inputfile_ggH[100];
-  char inputfile_VBF[100];
+  char dest[PATH_MAX];
+  sprintf(dest, "%s", gSystem->pwd());
+  char * pchar = strstr(dest, "PT13TeV");
+  strcpy(pchar, "PT13TeV/\0");
+  //  /afs/cern.ch/user/r/rbarr/Analysis/CMSSW_8_0_9/src/ZZAnalysis/AnalysisStep/test/prod/RobertTest/mytree/PT13TeV/
 
-   for (int i=0; i<Nfiles_ggH; i++) {
-//     sprintf(inputfile_ggH,"highPtMuonId200/mytree/PT13TeV/ggH%d/ZZ4lAnalysis.root",sampleMass_ggH[i]);
-     sprintf(inputfile_ggH,"highPtMuonId200/mytree/PT13TeV/ZZ4lAnalysis.root",sampleMass_ggH[i]);
-     addbr(inputDir+inputfile_ggH,sampleMass_ggH[i]);
-   }
+  char inputfile_ggH[PATH_MAX];
 
-/*
-   for (int i=0; i<Nfiles_VBF; i++) {
-     sprintf(inputfile_VBF,"highPtMuonId200/mytree/PT13TeV/VBFH%d/ZZ4lAnalysis.root",sampleMass_VBF[i]);
-     addbr(inputDir+inputfile_VBF,sampleMass_VBF[i]);
-   }
-*/
+  sprintf(inputfile_ggH,"%sggH%d/ZZ4lAnalysis.root",dest, 115);
+  selective_copy(inputfile_ggH, 115);
+
 }
