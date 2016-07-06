@@ -51,8 +51,8 @@ TGraphErrors* makegr(int n=1,double x[]={0},double y[]={0},double ex[]={0},doubl
   c->Update();
   char pn1[50];
   char pn2[50];
-  sprintf(pn1,"params/indiFit_param_%s_vs_%s_<channel>_%s_e%d.png",ytitle,xtitle,cType,exclude);
-  sprintf(pn2,"params/indiFit_param_%s_vs_%s_<channel>_%s_e%d.pdf",ytitle,xtitle,cType,exclude);
+  sprintf(pn1,"params/indiFit_param_%s_vs_%s_<channel>_%s.png",ytitle,xtitle,cType);
+  sprintf(pn2,"params/indiFit_param_%s_vs_%s_<channel>_%s.pdf",ytitle,xtitle,cType);
 //  sprintf(pn,"param_%s_vs_%s_4mu.png",ytitle,xtitle);
   c->SaveAs(pn1);
   c->SaveAs(pn2);
@@ -108,9 +108,9 @@ Double_t mass_err[n_MH]={0};
   double mean_initParam[npars]={1000,2000,0,0,0,0,0};
   double sigma_initParam[npars]={1000,2000,0,0,0,0,0};
 
-  if (ZZCandType == 1)
+  if (candType == 0)
     sprintf(cType,"J");
-  else if (ZZCandType ==2)
+  else if (candType == 1)
     sprintf(cType,"jj");
 
 TGraph* gr1 = makegr(n_MH,MH,mean,mass_err,mean_err,20,2,"doubleCB param","mass","mean",mean_initParam);
@@ -147,8 +147,8 @@ TGraph* gr6 = makegr(n_MH,MH,n2,mass_err,n2_err,25,94,"doubleCB param","mass","n
 
   char title1[50];
   char title2[50];
-  sprintf(title1,"params/indiFit_param_all_<channel>_%s_e%d.png",cType,exclude);
-  sprintf(title2,"params/indiFit_param_all_<channel>_%s_e%d.pdf",cType,exclude);
+  sprintf(title1,"params/indiFit_param_all_<channel>_%s.png",cType);
+  sprintf(title2,"params/indiFit_param_all_<channel>_%s.pdf",cType);
   c2->SaveAs(title1);
   c2->SaveAs(title2);
 }

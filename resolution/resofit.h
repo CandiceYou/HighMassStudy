@@ -63,7 +63,7 @@ using namespace RooFit;
   vector<float> *m4l=0,*Z1Mass=0,*Z2Mass=0;
   float genM;
   vector<float> *wt=0;
-  vector<Short_t> *z1flav=0,*z2flav=0,*zzsel=0,*candType=0;
+  vector<Short_t> *z1flav=0,*z2flav=0,*ZZsel=0,*ZZCandType=0,*Z1tau21=0;
 //  Short_t z1flav, z2flav,zzsel;
   float weight = 0,PUWeight=0,genHEPMCweight=0;
   char cType[10];
@@ -92,7 +92,8 @@ using namespace RooFit;
   RooRealVar* n2_ind[100];
   RooFitResult* fitres[100];
 
-  TString  inputDir = "/afs/cern.ch/user/w/wqin/CMSSW_8_0_7/src/ZZAnalysis/AnalysisStep/test/prod/";
+//  TString inputDir = "/afs/cern.ch/user/w/wqin/CMSSW_8_0_7/src/ZZAnalysis/AnalysisStep/test/prod/";
+  TString inputDir = "/afs/cern.ch/work/c/cayou/public/forWenzerRobert/2l2qsamples_new/";
 //  char dest[PATH_MAX];
 //  sprintf(dest, "%s", gSystem->pwd());
 //  char * pchar = strstr(dest, "prod");
@@ -100,10 +101,9 @@ using namespace RooFit;
 //  TString inputDir = dest;
   
   char channel[100]; 
-  int massBin[]={350,400,450,500,600,700,750,850,1000,1200,2000};
-  int inputfiles[]={350,400,450,500,600,700,750,1000,2000};
-  short ZZCandType=1; //1 for merged jet (J), 2 for two resolved jets (jj)
-  int exclude=2; //0 for exclude nothing; 1 exclude events with one jet type; 2 exclude events with both jet types
+  int massBin[]={200,250,350,400,450,500,600,700,750,1000,2000};
+  int inputfiles[]={200,250,350,400,450,500,600,700,750,1000,2000};
+  short candType=0; //0 for merged jet (J), 1 for two resolved jets (jj)
   int maxMassBin=sizeof(massBin)/sizeof(*massBin);;
   int Nfiles=sizeof(inputfiles)/sizeof(*inputfiles);
 
