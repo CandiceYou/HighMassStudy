@@ -71,12 +71,15 @@ void readData(char* channel="4e")
             ntupleVarSet.setCatIndex("massrc",massBin[i]);
             ntupleVarSet.setRealValue("reso",(m4l->at(candID))-genM);
             ntupleVarSet.setRealValue("myW",PUWeight*genHEPMCweight);
+            cout << endl << "~ ~ " << k << ", " << j << ", " << massBin[i] << ", " << ZZCandType->at(j); //FIXME delete
           }
+      if (typ==candType) {
+        cout << " - " << candID << ", " << typ << " ~ ~" << endl; //FIXME delete
+        dataset->add(ntupleVarSet, PUWeight*genHEPMCweight);
+      }
+
         }
       }
-//    Sort entry into approrpriate dataset      
-      if (typ==candType)
-        dataset->add(ntupleVarSet, PUWeight*genHEPMCweight);
     } 
 
   cout << "dataset n entries: " << dataset->sumEntries() << endl;
