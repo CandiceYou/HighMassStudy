@@ -8,35 +8,35 @@
 
 //spin : 0 spin0, 2 spin2.
 //ch : 0 4mu, 1 4e, 2 2e2mu.
-/*
-#define TAG_MACRO(j) { \
-  float D_2jet = 1./(1.+0.06*(phjj_VAJHU_highestPTJets->at(j)/pvbf_VAJHU_highestPTJets->at(j))); \
-    int tag=0; //0 for untagged, 1 for vbf-tagged, 2 for b-tagged \
-    if(nExtraJets >=2 && D_2jet > 0.5) tag = 1; \
-    else { \
-      if (local_ZZCandType==1) { //1 for merged jet (J) \
-        if (btag1stSubjet > 0.46 && btag2ndSubjet > 0.46) \
-          tag = 2; \
-      } \
-      else { //2 for two resolved jets (jj) \
-        if(btag1stJet > 0.46 && btag2ndJet > 0.46) \
-          tag = 2; \
-      } \
-    } \
-    if(tagged != tag) break; \
-    hreco->Fill(GenHMass,(genHEPMCweight*PUWeight)); \
-}
-*/
-#define TAG_MACRO(j) {  float D_2jet = 1./(1.+0.06*(phjj_VAJHU_highestPTJets->at(j)/pvbf_VAJHU_highestPTJets->at(j)));     int tag=0;      if(nExtraJets >=2 && D_2jet > 0.5) tag = 1;     else {       if (local_ZZCandType==1) {          if (btag1stSubjet > 0.46 && btag2ndSubjet > 0.46)           tag = 2;       }       else {          if(btag1stJet > 0.46 && btag2ndJet > 0.46)           tag = 2;       }     }     if(tagged != tag) break;     hreco->Fill(GenHMass,(genHEPMCweight*PUWeight)); }
+
+#define TAG_MACRO(j) {  float D_2jet = 1./(1.+0.06*(phjj_VAJHU_highestPTJets->at(j)/pvbf_VAJHU_highestPTJets->at(j)));     int tag=0;      if(nExtraJets >=2 && D_2jet > 0.5) tag = 1;     else {       if (local_ZZCandType==1) {          if (btag1stSubjet > 0.46 && btag2ndSubjet > 0.46)           tag = 2;       }       else {          if(btag1stJet > 0.46 && btag2ndJet > 0.46)           tag = 2;       }     }     if(tagged != tag) break;   {  hreco->Fill(GenHMass,(genHEPMCweight*PUWeight));} }
 
 short local_ZZCandType; //1 for merged jet (J), 2 for two resolved jets (jj)
 int exclude; //0 exclude nothing; 1 only consider ambiguous; 2 exclude ambiguous
 int channel; //121 for eeqq, 169 for mumuqq 
 int tagged; //0 for untagged, 1 for vbf-tagged, 2 for b-tagged
 
-char * polytype="polyFunctot";
-TString resolve;
+std::array<std::array<float,4>,40> params;
 
+//used to automatically resolve your directory
+TString directory;
+
+char * getName() {
+  char ret[PATH_MAX];
+  const char * string_ZZCandType = (local_ZZCandType==2)?"jj":"J";
+  const char * string_channel = (channel==121)?"eeqq":"mumuqq";
+  const char * string_exclude="";
+    if(exclude==2) string_exclude = "reject_ambiguous";
+    else if(exclude==1) string_exclude = "only_ambiguous";
+    else if(exclude==0) string_exclude = "all";
+  const char * string_tagged="";
+    if(tagged==2) string_tagged = "b-tagged";
+    else if(tagged==1) string_tagged = "vbf-tagged";
+    else if(tagged==0) string_tagged = "untagged";
+
+  sprintf(ret, "%s,%s,%s,%s", string_ZZCandType, string_channel, string_tagged, string_exclude);
+  return ret;
+}
 TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int line=1){
   gStyle->SetPadLeftMargin(0.1);
   gStyle->SetPadRightMargin(0.1);
@@ -51,7 +51,7 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
   strcpy(pchar, "prod/\0");
   TString inputDir = dest;
  
-  int inputfiles_ggH[]={1000,2000,400,450,500,550,600,750,800};
+  int inputfiles_ggH[]={200,250,350,400,450,500,600,750,1000,2000};
   
   int Nfiles_ggH=sizeof(inputfiles_ggH)/sizeof(*inputfiles_ggH);
   char inputfile[PATH_MAX];
@@ -119,7 +119,7 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
 int nInJets = 0;
 int nExtraJets = 0;
 
-for (int i=0; i<candTree->GetEntries(); i++) {
+for (int i=0; i<candTree->GetEntries(); i++) {//candTree->GetEntries()
   candTree->GetEntry(i);
   if(genFinalState!=ch) continue;
   hgen->Fill(GenHMass,(genHEPMCweight*PUWeight));
@@ -183,12 +183,12 @@ for (int i=0; i<candTree->GetEntries(); i++) {
 case 0: //consider all
   if(ZZCandType->size() == 1) { // unambiguous
     if(local_ZZCandType==1) { //merged
-      if( (ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel) && (Z1tau21->at(0) <= 0.6)) 
+      if( (ZZCandType->at(0) == local_ZZCandType) && (abs(ZZsel->at(0))>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel) && (Z1tau21->at(0) <= 0.6)) 
         TAG_MACRO(0);
       }
 
     else { //resolved
-      if( (ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel))
+      if( (ZZCandType->at(0) == local_ZZCandType) && (abs(ZZsel->at(0))>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel))
         TAG_MACRO(0);
     }
   }
@@ -196,22 +196,20 @@ case 0: //consider all
   if(ZZCandType->size() == 2) {  // ambiguous
 
     if(local_ZZCandType==1) { //merged
-        if( (ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel) && (Z1tau21->at(0) <= 0.6)) 
+        if( (ZZCandType->at(0) == local_ZZCandType) && (abs(ZZsel->at(0))>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel) && (Z1tau21->at(0) <= 0.6)) 
         {
         TAG_MACRO(0);
-      }
+        }
       
       else {
-        
         if ((ZZCandType->at(1) == local_ZZCandType) && (ZZsel->at(1)>=100) && (Z2Mass->at(1) >= 60) && (Z1Mass->at(1)>=70) && (Z1Mass->at(1)<=105) && (abs(Z2Flav->at(1))==channel) && (Z1tau21->at(0) <= 0.6))
         TAG_MACRO(1);
-      }
+        }
     }
     
-
     else { //resolved
       
-      if( (ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel)) {
+      if( (ZZCandType->at(0) == local_ZZCandType) && (abs(ZZsel->at(0))>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel)) {
         TAG_MACRO(0);
       }
 
@@ -229,12 +227,12 @@ case 2: // only consider unambiguous
   if(ZZCandType->size() != 1) break; 
 
     if(local_ZZCandType==1) { //merged
-      if( (ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel) && (Z1tau21->at(0) <= 0.6)) 
+      if( (ZZCandType->at(0) == local_ZZCandType) && (abs(ZZsel->at(0))>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel) && (Z1tau21->at(0) <= 0.6)) 
         TAG_MACRO(0);
     }
 
     else { //resolved
-      if( (ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel))
+      if( (ZZCandType->at(0) == local_ZZCandType) && (abs(ZZsel->at(0))>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel))
         TAG_MACRO(0);
     }
   } //switch
@@ -266,6 +264,8 @@ case 2: // only consider unambiguous
    gen_raw[bin-1] = hgen->GetBinContent(bin);
    reco_raw[bin-1] = hreco->GetBinContent(bin);
  }
+
+
 
  cout<<"spin="<<spin<<",ch="<<ch<<endl;
 
@@ -307,19 +307,23 @@ case 2: // only consider unambiguous
   cout<<eff[i]<<",";
 }
 
-  TF1 *polyFunctot= new TF1("polyFunctot","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x)+[7]*TMath::Gaus(x,[8],[9])", 300, 2000);
-  polyFunctot->SetParameters(-4.42749e+00,4.61212e+0,-6.21611e+01,1.13168e+02,2.14321e+00,1.04083e-03,4.89570e-07, 0.03, 200, 30,0);
-  polyFunctot->SetParLimits(7,0,0.2);
-  polyFunctot->SetParLimits(8,700,1400);
-  polyFunctot->SetParLimits(9,10,150);
+  char * polyFunctot_form = "([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x)+[7]*TMath::Gaus(x,[8],[9])";
+  TF1 *polyFunctot= new TF1("polyFunctot", "([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x)+[7]*TMath::Gaus(x,[8],[9])", 300, 2000);
+  polyFunctot->SetParameters(-4.42749e+00,4.61212e+0,-6.21611e+01,1.13168e+02,2.14321e+00,1.04083e-03,4.89570e-07, 0.01, 200, 30,0);
+
+
+  for(auto && p:params) {
+    if(p[0]<0) break;
+    cout << p[0] << "," << p[1] << "," << p[2] << "," << p[3]<<endl;
+    polyFunctot->SetParameter((int)p[0], p[3]);
+    polyFunctot->SetParLimits((int)p[0],p[1],p[2]);
+  }
+
   polyFunctot->SetLineColor(color);
  
   if(spin==0)   polyFunctot->SetLineStyle(1);
   else if(spin==2) {
-  polyFunctot->SetParLimits(7,0,0);
-  polyFunctot->SetParLimits(8,0,0);
-  polyFunctot->SetParLimits(9,0,0); 
-  polyFunctot->SetLineStyle(2);
+    polyFunctot->SetLineStyle(2);
   }
 
   TGraphErrors *gr = new TGraphErrors (n,M,eff,massE,effE);
@@ -328,14 +332,20 @@ case 2: // only consider unambiguous
   gr->SetMarkerStyle(marker);
   gr->SetMarkerSize(1);
   cout<<"\n\nparameters:\n";
-  gr->Fit(polytype);
+  gr->Fit("polyFunctot");
   gr->SetLineColor(color);
   
-  TString param_txt = resolve;
+  TString param_txt = directory;
   param_txt += ".txt";
 
   FILE *fp = fopen(param_txt.Data(),"w");
-  if (fp!=NULL && polytype =="polyFunctot" ) {
+  if (fp!=NULL) {
+    fprintf(fp,"%s\n%s",polyFunctot_form, "polyFunctot->SetParameters(");
+    for (int i=0;i<polyFunctot->GetNpar();i++) {
+        Float_t value = polyFunctot->GetParameter(i);
+        fprintf(fp,"%s%f", (i==0)?"":", ", value);
+     }
+    fprintf(fp,");\n");
     for (int i=0;i<polyFunctot->GetNpar();i++) {
         Float_t value = polyFunctot->GetParameter(i);
         fprintf(fp,"p%d\t%f\n",i,value);
@@ -349,7 +359,7 @@ case 2: // only consider unambiguous
 
 
 void ploteff_sig_spin2_80X_2(){
-  TCanvas* c2 = new TCanvas("c2", "c2", 1000, 10, 1400, 800);
+  TCanvas* c2 = new TCanvas("c3", "c3", 1000, 10, 1400, 800);
   //c2->SetLogx(); 
   c2->SetFillColor(0);
   c2->SetRightMargin(0.13);
@@ -358,55 +368,28 @@ void ploteff_sig_spin2_80X_2(){
   //auto resolve directory name
   char dest[PATH_MAX];  
   sprintf(dest, "%s", gSystem->pwd());
-
   char * pchar = strstr(dest, "/w/wqin");
   if(pchar != 0)
   strcpy(pchar, "/w/wqin/www/\0");
-
   pchar = strstr(dest, "/r/rbarr");
   if(pchar != 0)
   strcpy(pchar, "/r/rbarr/www/2l2q/\0");
-
   pchar = strstr(dest, "/c/cayou");
   if(pchar != 0)
   strcpy(pchar, "/c/cayou/www/HighMass/\0");
+  sprintf(dest+strlen(dest), "efficiency_%s", getName());
+  directory = TString(dest);
 
+  TGraphErrors* ggH_2l2q = makegr(0,99,kBlue,24,2);
 
-  const char * string_ZZCandType = (local_ZZCandType==2)?"jj":"J";
-  const char * string_channel = (channel==121)?"eeqq":"mumuqq";
-  const char * string_exclude="";
-    if(exclude==2) string_exclude = "reject_ambiguous";
-    else if(exclude==1) string_exclude = "only_ambiguous";
-    else if(exclude==0) string_exclude = "all";
-  const char * string_tagged="";
-    if(tagged==2) string_tagged = "b-tagged";
-    else if(tagged==1) string_tagged = "vbf-tagged";
-    else if(tagged==0) string_tagged = "untagged";
-
-  sprintf(dest+strlen(dest), "efficiency_%s_%s_%s_%s", string_ZZCandType, string_channel, string_tagged, string_exclude);
-  resolve = TString(dest);
-
-
-  //TGraphErrors* ggH_4mu = makegr(0,0,kRed,20,1);
-  //TGraphErrors* ggH_4e = makegr(0,1,kGreen,20,1);
-  //TGraphErrors* ggH_2e2mu = makegr(0,2,kBlue,20,1);
-  //TGraphErrors* spin2_4mu = makegr(2,0,kRed+2,24,2);
-  //TGraphErrors* spin2_4e = makegr(2,1,kGreen+2,24,2);
-  //TGraphErrors* spin2_2e2mu = makegr(2,2,kBlue+2,24,2);
-  TGraphErrors* ggH_2l2q = makegr(0,99,kViolet,24,2);
-
-  //mg->Add(ggH_4e);
-  //mg->Add(ggH_4mu);
-  //mg->Add(ggH_2e2mu);
   mg->Add(ggH_2l2q);
-  //mg->Add(spin2_4e);
-  //mg->Add(spin2_4mu);
-  //mg->Add(spin2_2e2mu);
+
   mg->Draw("AP");
   mg->GetXaxis()->SetTitle("genHMass [GeV]");
   mg->GetYaxis()->SetTitle("efficiency*acceptance");
   mg->GetYaxis()->SetRangeUser(0,1);
   mg->GetXaxis()->SetRangeUser(100,4100);
+  mg->GetYaxis()->SetRangeUser(0.,0.35);
 
   TLegend* leg3 = new TLegend(.9,0.3,0.99,.85);
   leg3->SetFillColor(0);
@@ -422,24 +405,106 @@ void ploteff_sig_spin2_80X_2(){
   //leg3->AddEntry(spin2_4mu,"ggH->2b+ 4mu","pl");
   //leg3->AddEntry(spin2_2e2mu,"ggH->2b+ 2e2mu","pl");
   //leg3->AddEntry(spin2_4e,"ggH->2b+ 4e","pl");
-  leg3->Draw();
-
+  //leg3->Draw();
 
   c2->Update();
-  c2->SaveAs(resolve + ".png");
-  c2->SaveAs(resolve + ".pdf");
+  c2->SaveAs(directory + ".png");
+  c2->SaveAs(directory + ".pdf");
 }
 
-void ploteff_sig_spin2_80X() {
+TGraphErrors* helper_function(Color_t color){
+ TCanvas* c2 = new TCanvas("c2", "c2", 1000, 10, 1400, 800);
+  //c2->SetLogx(); 
+  c2->SetFillColor(0);
+  c2->SetRightMargin(0.13);
+  TMultiGraph *mg = new TMultiGraph();
 
-  for(int c:{1,2}) {           //1 for merged jet (J), 2 for two resolved jets (jj)
-    local_ZZCandType=c;
-    exclude=(local_ZZCandType==2)? 0:2;   //give preference to resolved jets
-  for (int ch:{121,169}) {               //121 for eeqq, 169 for mumuqq 
-    channel=ch;
-  for (int t:{0,1,2}) {                //0 for untagged, 1 for vbf-tagged, 2 for b-tagged
-    tagged=t;
-    printf("%d\t%d\t%d\t%d\n", local_ZZCandType, exclude, channel, tagged);
-    ploteff_sig_spin2_80X_2();
-  }}}
+  //auto resolve directory name
+  char dest[PATH_MAX];  
+  sprintf(dest, "%s", gSystem->pwd());
+  char * pchar = strstr(dest, "/w/wqin");
+  if(pchar != 0)
+  strcpy(pchar, "/w/wqin/www/\0");
+  pchar = strstr(dest, "/r/rbarr");
+  if(pchar != 0)
+  strcpy(pchar, "/r/rbarr/www/2l2q/July1/\0");
+  pchar = strstr(dest, "/c/cayou");
+  if(pchar != 0)
+  strcpy(pchar, "/c/cayou/www/HighMass/\0");
+  sprintf(dest+strlen(dest), "efficiency_%s", getName());
+  directory = TString(dest);
+
+  TGraphErrors* ggH_2l2q = makegr(0,99,color,24,2);
+
+  mg->Add(ggH_2l2q);
+
+  mg->Draw("AP");
+  mg->GetXaxis()->SetTitle("genHMass [GeV]");
+  mg->GetYaxis()->SetTitle("efficiency*acceptance");
+  mg->GetYaxis()->SetRangeUser(0,1);
+  mg->GetXaxis()->SetRangeUser(100,4100);
+  mg->GetYaxis()->SetRangeUser(0.,0.35);
+
+  c2->Update();
+  c2->SaveAs(directory + ".png");
+  c2->SaveAs(directory + ".pdf");
+
+  return ggH_2l2q;
 }
+
+
+
+void ploteff_sig_spin2_80X(){
+  //auto resolve directory name
+  char dest[PATH_MAX];  
+  sprintf(dest, "%s", gSystem->pwd());
+
+  char * pchar = strstr(dest, "/w/wqin");
+  if(pchar != 0)
+  strcpy(pchar, "/w/wqin/www/\0");
+  pchar = strstr(dest, "/r/rbarr");
+  if(pchar != 0)
+  strcpy(pchar, "/r/rbarr/www/2l2q/\0");
+  pchar = strstr(dest, "/c/cayou");
+  if(pchar != 0)
+  strcpy(pchar, "/c/cayou/www/HighMass/\0");
+  sprintf(dest+strlen(dest), "efficiency");
+  directory = TString(dest);
+
+  TCanvas* c2 = new TCanvas("c3", "c3", 1000, 10, 1400, 800);
+  //c2->SetLogx(); 
+  c2->SetFillColor(0);
+  c2->SetRightMargin(0.13);
+  TMultiGraph *mg = new TMultiGraph();
+
+  TLegend* leg3 = new TLegend(.9,0.3,0.99,.85);
+  leg3->SetFillColor(0);
+  leg3->SetBorderSize(0);
+//([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x)+ [7]*TMath::Gaus(x,[8],[9])
+  local_ZZCandType=1;
+  channel=121;
+  tagged=0;
+  exclude=(local_ZZCandType==2)? 0:2;
+  params = {2,800,1400,1000, 8,800,1400,1200, 9,20,170,100, 7,0,.3,.2, 0,-5,5,-4, -1};
+  { //screw you and your scope 
+    //screw you and your deconstructors
+  void* ggH_2l2q = (void *)helper_function(2);
+  leg3->AddEntry((TGraphErrors*)ggH_2l2q,(const char *) getName(),"pl");
+  mg->Add((TGraphErrors*)ggH_2l2q);
+  }
+  
+
+  mg->Draw("AP");
+  mg->GetXaxis()->SetTitle("genHMass [GeV]");
+  mg->GetYaxis()->SetTitle("efficiency*acceptance");
+  mg->GetYaxis()->SetRangeUser(0,1);
+  mg->GetXaxis()->SetRangeUser(100,4100);
+  mg->GetYaxis()->SetRangeUser(0.,0.35);
+
+  leg3->Draw();
+
+  c2->Update();
+  c2->SaveAs(directory + ".png");
+  c2->SaveAs(directory + ".pdf");
+}
+
