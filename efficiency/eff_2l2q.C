@@ -1,10 +1,13 @@
 Double_t merged_fit(Double_t *xx, Double_t *par)
 {
-   Float_t x =xx[0];
-   Double_t f = par[0]*TMath::Erf( (x-par[1])/par[2] ) + (par[3] + par[4]*TMath::ATan((x-par[5])/par[6]));
+   Double_t temp = 1700;  //quadratic spline
+   Double_t x =xx[0], y=(x-temp)/1000.;
+   Double_t f;
+
+   if(x<=temp) f = par[0]*TMath::Erf( (x-par[1])/par[2] ) + (par[3] + par[4]*TMath::ATan((x-par[5])/par[6]));
+   else {f = merged_fit(&temp, par) + par[7]*y+par[8]*y*y; }
    return f;
 }
-
 
 Double_t resolved_fit(Double_t *xx, Double_t *par)
 {
@@ -24,8 +27,8 @@ void eff_2l2q(int prod=0){
   TChain *candTree = new TChain("ZZTree/candTree");
 
   TString  inputDir = "/afs/cern.ch/work/c/cayou/public/forWenzerRobert/2l2qsamples_new/";
-  int inputfiles_ggH[]={200,250,350,400,450,500,600,700,750,1000,2000};
-  int inputfiles_VBF[]={200,250,400,450,500,550,600,700,750,800,900,1000,1500,2500};
+  int inputfiles_ggH[]={200,250,350,400,450,500,600,700,750,1000,2000,2500};
+  int inputfiles_VBF[]={200,250,300,400,450,500,550,600,700,750,800,900,1000,1500,2000,2500,3000};
   int Nfiles_ggH=sizeof(inputfiles_ggH)/sizeof(*inputfiles_ggH);
   int Nfiles_VBF=sizeof(inputfiles_VBF)/sizeof(*inputfiles_VBF);
   char inputfile[PATH_MAX];
@@ -80,7 +83,7 @@ void eff_2l2q(int prod=0){
 
 
   vector<short> *ZZsel=0,*ZZCandType=0,*Z2Flav=0;
-  vector<float> *ZZMass=0,*Z1Mass=0,*Z2Mass=0,*Z1tau21=0;
+  vector<float> *ZZMass=0,*Z1Mass=0,*Z2Mass=0,*Z1tau21=0,*Z1Pt=0,*Z2Pt=0;
   vector<float> *pvbf_VAJHU_highestPTJets=0,*phjj_VAJHU_highestPTJets=0,*pVAMCFM_qqZJJ_bkg=0,*pVAJHUGen_ggZZ_SM_sig=0; 
   vector<bool> *JetIsInZZCand=0;
   vector<float> *JetQGLikelihood=0,*JetBTagger=0,*JetPt=0;;
@@ -101,6 +104,8 @@ void eff_2l2q(int prod=0){
   candTree->SetBranchAddress("genHEPMCweight",&genHEPMCweight);
   candTree->SetBranchAddress("PUWeight",&PUWeight);
   candTree->SetBranchAddress("Z1tau21", &Z1tau21);
+  candTree->SetBranchAddress("Z1Pt", &Z1Pt);
+  candTree->SetBranchAddress("Z2Pt", &Z2Pt);
   candTree->SetBranchAddress("Z2Flav", &Z2Flav);
   candTree->SetBranchAddress("JetQGLikelihood", &JetQGLikelihood);
   candTree->SetBranchAddress("JetBTagger", &JetBTagger);
@@ -115,15 +120,23 @@ void eff_2l2q(int prod=0){
 // Fill gen histo
      hgen->Fill(GenHMass,(genHEPMCweight * PUWeight));
 
-     int typ=-1 , lep=-1, tag = -1 , candID=-1;
+     int typ=-1 , lep=-1, tag = -1 , candID=-1 , candID_M=-1, candID_R=-1;
 
 // Find candidate ID , prefer resolved
      for (int j = 0; j < ZZCandType->size(); j++) {
          if ( ((ZZCandType->at(j)==1 && Z1tau21->at(j)<=0.6)||ZZCandType->at(j)==2) && fabs(ZZsel->at(j))>=100 && Z1Mass->at(j)>=70 && Z1Mass->at(j)<=105 && Z2Mass->at(j)>=60){
-            if (ZZCandType->at(j)==1) {typ=0; candID=j;}  //merged, SR
-            else if (ZZCandType->at(j)==2) {typ=1; candID=j;break;}  //resolved, SR
+            if (ZZCandType->at(j)==1) candID_M=j; //merged, SR
+            else if (ZZCandType->at(j)==2) candID_R=j;  //resolved, SR
       }
      }
+
+    if( (candID_M==-1) && (candID_R==-1)) {candID=-1 ; typ=-1;}
+    else if ( (candID_M==-1) && (candID_R!=-1)) {candID=candID_R ; typ=1;}
+    else if ( (candID_M!=-1) && (candID_R==-1)) {candID=candID_M ; typ=0;}
+    else if ( (candID_M!=-1) && (candID_R!=-1)){
+      if (Z1Pt->at(candID_M)>300 && Z2Pt->at(candID_M)>200) {typ=0; candID=candID_M;}
+      else {typ=1; candID=candID_R;}
+    }
 
 // Find leading jets
       float pt1stJet = 0.0001;
@@ -142,39 +155,39 @@ void eff_2l2q(int prod=0){
       int nExtraJets = 0;
 
       for (unsigned int nJet=0; nJet<JetPt->size(); nJet++) {
-	if (JetQGLikelihood->at(nJet) > -800.) {            // real jets
- 	  if (JetIsInZZCand->at(nJet) ) {         
-	    if (pt1stJet < JetPt->at(nJet)) {
-	      pt2ndJet = pt1stJet;
-	      pt1stJet = JetPt->at(nJet);
-	      btag2ndJet = btag1stJet;
-	      btag1stJet = JetBTagger->at(nJet);
-	      qglik2ndJet = qglik1stJet;
-	      qglik1stJet = JetQGLikelihood->at(nJet);
-	    } else if (pt2ndJet < JetPt->at(nJet)) {
-	      pt2ndJet = JetPt->at(nJet);
+  if (JetQGLikelihood->at(nJet) > -800.) {            // real jets
+    if (JetIsInZZCand->at(nJet) ) {         
+      if (pt1stJet < JetPt->at(nJet)) {
+        pt2ndJet = pt1stJet;
+        pt1stJet = JetPt->at(nJet);
+        btag2ndJet = btag1stJet;
+        btag1stJet = JetBTagger->at(nJet);
+        qglik2ndJet = qglik1stJet;
+        qglik1stJet = JetQGLikelihood->at(nJet);
+      } else if (pt2ndJet < JetPt->at(nJet)) {
+        pt2ndJet = JetPt->at(nJet);
               btag2ndJet = JetBTagger->at(nJet);
-	      qglik2ndJet = JetQGLikelihood->at(nJet);
-	    }
-	    nInJets++;
-	  } else nExtraJets++;  
-	}
+        qglik2ndJet = JetQGLikelihood->at(nJet);
+      }
+      nInJets++;
+    } else nExtraJets++;  
+  }
       } 
 
       for (unsigned int nJet=0; nJet<JetPt->size(); nJet++) {
-	if (JetQGLikelihood->at(nJet) < -800.) {            // subjets
-	  if (JetIsInZZCand->at(nJet) ) {         
-	    if (pt1stSubjet < JetPt->at(nJet)) {
-	      pt2ndSubjet = pt1stSubjet;
-	      pt1stSubjet = JetPt->at(nJet);
-	      btag2ndSubjet = btag1stSubjet;
-	      btag1stSubjet = JetBTagger->at(nJet);
-	    } else if (pt2ndSubjet < JetPt->at(nJet)) {
-	      pt2ndSubjet = JetPt->at(nJet);
+  if (JetQGLikelihood->at(nJet) < -800.) {            // subjets
+    if (JetIsInZZCand->at(nJet) ) {         
+      if (pt1stSubjet < JetPt->at(nJet)) {
+        pt2ndSubjet = pt1stSubjet;
+        pt1stSubjet = JetPt->at(nJet);
+        btag2ndSubjet = btag1stSubjet;
+        btag1stSubjet = JetBTagger->at(nJet);
+      } else if (pt2ndSubjet < JetPt->at(nJet)) {
+        pt2ndSubjet = JetPt->at(nJet);
               btag2ndSubjet = JetBTagger->at(nJet);
-	    }
-	  }
-	}
+      }
+    }
+  }
       } 
 
 // VBF tagging 
@@ -191,7 +204,7 @@ void eff_2l2q(int prod=0){
         else cout<<"Error! undefined flavor!"<<endl;
 
 //vbf-tagging && b-tagging
-        if (nExtraJets>=2 && D_2jet>0.5) tag=0;  //vbf tagged
+        if (nExtraJets>=2 &&D_2jet>(0.536+665./(ZZMass->at(candID)+1530.))) tag=0;  //vbf tagged
         else if ((typ==1 && btag1stJet>0.46 && btag2ndJet>0.46)||(typ==0 && btag1stSubjet>0.46 && btag2ndSubjet>0.46)) tag=1; //b-tagged
         else tag=2;  //untagged
 
@@ -274,25 +287,27 @@ void eff_2l2q(int prod=0){
   }
  }
 
-//Fitting Function
-  TF1 *polyFunctot_merged= new TF1("polyFunctot_merged",merged_fit, 110., 2500, 7);
-  polyFunctot_merged->SetParameters(.1, 1000, 300, .7, .1, 1000, 300);
-  polyFunctot_merged->SetParLimits(0,0,.2);
-  polyFunctot_merged->SetParLimits(1,300,1300);
-  polyFunctot_merged->SetParLimits(2,20,300);
+//Fitting Function  par[0]*TMath::Erf( (x-par[1])/par[2] ) + (par[3] + par[4]*TMath::ATan((x-par[5])/par[6]));
+  TF1 *polyFunctot_merged= new TF1("polyFunctot_merged",merged_fit, 200., 3000, 9);
+  polyFunctot_merged->SetParameters(0.055533, 696.978882, 201.791214, 0.074554, 0.013758, 1489.137451, 272.321777, 0.01, -0.01);
+  polyFunctot_merged->SetParLimits(0,.003,.2);
+  polyFunctot_merged->SetParLimits(1,500,1100);
+  polyFunctot_merged->SetParLimits(2,150,500);
   polyFunctot_merged->SetParLimits(3,0,1);
-  polyFunctot_merged->SetParLimits(4,0,.2);
-  polyFunctot_merged->SetParLimits(5,300,1300);
-  polyFunctot_merged->SetParLimits(6,20,300);
+  polyFunctot_merged->SetParLimits(4,.003,.2);
+  polyFunctot_merged->SetParLimits(5,500,1100);
+  polyFunctot_merged->SetParLimits(6,150,500);
+  polyFunctot_merged->SetParLimits(7,-.02,.02);
+  polyFunctot_merged->SetParLimits(8,-.02,.02);
 
 
-  TF1 *polyFunctot_resolved= new TF1("polyFunctot_resolved",resolved_fit, 110., 2500, 12);
-  polyFunctot_resolved->SetParameters(.1, -1.5, 2, 200, 800, .04, 1000, 100, .1, 800, 200);
+  TF1 *polyFunctot_resolved= new TF1("polyFunctot_resolved",resolved_fit, 200., 3000, 12);
+  polyFunctot_resolved->SetParameters(.1, -1.5, 2, 200, 500, .04, 1000, 100, .1, 800, 200);
   polyFunctot_resolved->SetParLimits(0,0,.25);
   polyFunctot_resolved->SetParLimits(1,-2,-1);
   polyFunctot_resolved->SetParLimits(2,1.3,2.5);
   polyFunctot_resolved->SetParLimits(3,50,300);
-  polyFunctot_resolved->SetParLimits(4,700,900);
+  polyFunctot_resolved->SetParLimits(4,400,700);
   polyFunctot_resolved->SetParLimits(6,1000,1500);
   polyFunctot_resolved->SetParLimits(7,100,500);
   polyFunctot_resolved->SetParLimits(8,-.05,.05);
@@ -334,7 +349,7 @@ void eff_2l2q(int prod=0){
          gr[i][j][k]->Write();
 
  //save parameters to file
-         const char * param_txt = prod?Form("/afs/cern.ch/user/r/rbarr/www/HighMassStudy/16.7.6/VBF_%s_%s_%s.txt",lepName[j],jetName[i],tagName[k]):Form("/afs/cern.ch/user/r/rbarr/www/HighMassStudy/16.7.6/ggH_%s_%s_%s.txt",lepName[j],jetName[i],tagName[k]);
+         const char * param_txt = prod?Form("/afs/cern.ch/user/r/rbarr/www/HighMassStudy/16.7.15/VBF_%s_%s_%s.txt",lepName[j],jetName[i],tagName[k]):Form("/afs/cern.ch/user/r/rbarr/www/HighMassStudy/16.7.15/ggH_%s_%s_%s.txt",lepName[j],jetName[i],tagName[k]);
          FILE *fp = fopen(param_txt,"w");
          if (fp!=NULL) {
          for (int i=0;i<polyFunctot->GetNpar();i++) {
@@ -346,6 +361,11 @@ void eff_2l2q(int prod=0){
               Float_t value = polyFunctot->GetParameter(i);
               fprintf(fp,"%s%f", (i==0)?"":", ", value);
            }
+           fprintf(fp, ")\n");
+           for (int i=0;i<polyFunctot->GetNpar();i++) {
+            Float_t value = polyFunctot->GetParameter(i);
+            fprintf(fp,"\np%d\t%f",i,value);
+         }
         }
       }
    }
@@ -357,11 +377,11 @@ void eff_2l2q(int prod=0){
    leg->Draw();
    c->Update();
    if (prod==0){ 
-    c->SaveAs(Form("~/www/HighMassStudy/16.7.6/eff_ggH_all_%s.png",lepName[j]));
-    c->SaveAs(Form("~/www/HighMassStudy/16.7.6/eff_ggH_all_%s.pdf",lepName[j]));}
+    c->SaveAs(Form("~/www/HighMassStudy/16.7.15/eff_ggH_all_%s.png",lepName[j]));
+    c->SaveAs(Form("~/www/HighMassStudy/16.7.15/eff_ggH_all_%s.pdf",lepName[j]));}
    else if (prod==1){
-    c->SaveAs(Form("~/www/HighMassStudy/16.7.6/eff_VBF_all_%s.png",lepName[j]));
-    c->SaveAs(Form("~/www/HighMassStudy/16.7.6/eff_VBF_all_%s.pdf",lepName[j]));}
+    c->SaveAs(Form("~/www/HighMassStudy/16.7.15/eff_VBF_all_%s.png",lepName[j]));
+    c->SaveAs(Form("~/www/HighMassStudy/16.7.15/eff_VBF_all_%s.pdf",lepName[j]));}
  }
  f.Close();
 }
