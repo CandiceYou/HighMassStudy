@@ -24,7 +24,7 @@ void test(const char* var1="Gen_costheta1", const char* var2="helcosthetaZ1", co
  candTree2->Add("~/Analysis/2l2q/CMSSW_8_0_7_wqin/src/ZZAnalysis/AnalysisStep/test/prod/2l2qsamples_2bp_madgraph/output.root");
 
 TChain *candTree3 = new TChain("ZZTree/candTree");
- candTree3->Add("/afs/cern.ch/user/r/rbarr/Analysis/2l2q/CMSSW_8_0_7_wqin/src/ZZAnalysis/AnalysisStep/test/prod/2016_2l2q/mytree/PT13TeV/ggHiggs600/ZZ2l2qAnalysis.root");
+ candTree3->Add("/afs/cern.ch/user/r/rbarr/Analysis/2l2q/CMSSW_8_0_7_wqin/src/ZZAnalysis/AnalysisStep/test/prod/2016_2l2q/mytree/PT13TeV/output.root");
 
 
  TH1F *hist1 = new TH1F("hist1","hist1",nbin,min,max);
@@ -56,18 +56,14 @@ TChain *candTree3 = new TChain("ZZTree/candTree");
 
  hist1->Scale(1/hist1->Integral());
  hist2->Scale(1/hist2->Integral());
- hist3->Scale(1); //integrals r hard
- cout << hist1->Integral() << endl <<hist2->Integral() << endl << hist3->Integral() << endl<< endl<< endl;
+ hist3->Scale(1/hist3->Integral()); //integrals r hard
+// cout << hist1->GetMaximum() << endl <<hist2->GetMaximum() << endl << hist3->GetMaximum() << endl<< endl<< endl;
 
  hist1->SetTitle(var2);
  hist1->GetXaxis()->SetTitle(var2);
 // if(var2!="Z1Mass"&&var2!="Z2Mass")
 // hist2->GetYaxis()->SetRangeUser(0,0.04);
 // hist2->GetYaxis()->SetTitle("Events");
-
- hist1->Draw("hist");
- hist2->Draw("samehist");
- hist3->Draw("whatdoiputhere");
 
  //Legend
  TLegend* leg = new TLegend(.65,0.8,0.85,.9);
@@ -77,6 +73,10 @@ TChain *candTree3 = new TChain("ZZTree/candTree");
  leg->AddEntry(hist2,"spin2_madgraph","l");
  leg->AddEntry(hist3,"spin0","l");
  leg->Draw();
+
+ hist1->Draw("hist");
+ hist2->Draw("samehist");
+ hist3->Draw("samehist");
 
  c->Update();
  char temp[150];
