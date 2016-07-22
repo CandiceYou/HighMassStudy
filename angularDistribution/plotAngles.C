@@ -18,10 +18,10 @@ void test(const char* var1="Gen_costheta1", const char* var2="helcosthetaZ1", co
 
  TChain *candTree1 = new TChain("ZZTree/candTree");
 //choose files with polemass>genmass
- candTree1->Add("~/Analysis/2l2q/CMSSW_8_0_7_wqin/src/ZZAnalysis/AnalysisStep/test/prod/2016_2l2q_spin2/output.root"); //no width
+ candTree1->Add("/afs/cern.ch/user/r/rbarr/Analysis/2l2q/CMSSW_8_0_7_wqin/src/ZZAnalysis/AnalysisStep/test/prod/2016_2l2q_spin2/output.root"); //no width
 
  TChain *candTree2 = new TChain("ZZTree/candTree");
- candTree2->Add("~/Analysis/2l2q/CMSSW_8_0_7_wqin/src/ZZAnalysis/AnalysisStep/test/prod/2l2qsamples_2bp_madgraph/output.root");
+ candTree2->Add("/afs/cern.ch/user/r/rbarr/Analysis/2l2q/CMSSW_8_0_7_wqin/src/ZZAnalysis/AnalysisStep/test/prod/2l2qsamples_2bp_madgraph/output.root");
 
 TChain *candTree3 = new TChain("ZZTree/candTree");
  candTree3->Add("/afs/cern.ch/user/r/rbarr/Analysis/2l2q/CMSSW_8_0_7_wqin/src/ZZAnalysis/AnalysisStep/test/prod/2016_2l2q/mytree/PT13TeV/output.root");
@@ -65,18 +65,18 @@ TChain *candTree3 = new TChain("ZZTree/candTree");
 // hist2->GetYaxis()->SetRangeUser(0,0.04);
 // hist2->GetYaxis()->SetTitle("Events");
 
+ hist1->Draw("hist");
+ hist2->Draw("samehist");
+ hist3->Draw("samehist");
+
  //Legend
  TLegend* leg = new TLegend(.65,0.8,0.85,.9);
  leg->SetFillColorAlpha(0,0);
  leg->SetBorderSize(0);
- leg->AddEntry(hist1,"spin2","l");
- leg->AddEntry(hist2,"spin2_madgraph","l");
- leg->AddEntry(hist3,"spin0","l");
- leg->Draw();
-
- hist1->Draw("hist");
- hist2->Draw("samehist");
- hist3->Draw("samehist");
+ leg->AddEntry(hist1,"spin2 jhugen","l");
+ leg->AddEntry(hist2,"spin2 madgraph","l");
+ leg->AddEntry(hist3,"spin0 powheg+jhugen","l");
+ leg->Draw();;;;;;;;;;;;;;;;;;;;;
 
  c->Update();
  char temp[150];
