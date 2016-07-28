@@ -151,4 +151,14 @@ TGraph* gr6 = makegr(n_MH,MH,n2,mass_err,n2_err,25,94,"doubleCB param","mass","n
   sprintf(title2,"params/indiFit_param_all_<channel>_%s.pdf",cType);
   c2->SaveAs(title1);
   c2->SaveAs(title2);
+
+ TFile f ("2l2q_2bp_resolution_resolved.root","recreate");
+ f.cd();
+ gr1->SetName("mean"); gr1->Write();
+ gr2->SetName("sigma"); gr2->Write();
+ gr3->SetName("a1"); gr3->Write();
+ gr4->SetName("a2"); gr4->Write();
+ gr5->SetName("n1"); gr5->Write();
+ gr6->SetName("n2"); gr6->Write();
+ f.Close();
 }
