@@ -62,6 +62,7 @@ void readData(char* channel="4e")
     candTree->SetBranchAddress("Z1Pt", &Z1Pt);
     candTree->SetBranchAddress("Z2Pt", &Z2Pt);
 
+    int count = 0;
     for(int k=0; k<nentries; k++){
       candTree->GetEvent(k);
 //      if (PUWeight*genHEPMCweight <= 0 ) cout << "Warning! Negative weight events" << endl;
@@ -86,7 +87,7 @@ void readData(char* channel="4e")
      }
 
      float t12weight = 1.;
-     if ((candID != -1) && (ZZCandType->at(candID) == 1)) {
+     if (typ == 0) {
        for (int itau = 0; itau < 24; itau++) {
          if (Z1tau21->at(candID) > tau21bin[itau] && Z1tau21->at(candID) < tau21bin[itau+1]) t12weight = 1.+tau21corr[itau];
        }
@@ -97,11 +98,11 @@ void readData(char* channel="4e")
 //       if (typ==candType && x.getVal()>xMin[i] && x.getVal()<xMax[i] && ((massBin[i]<1000&&genM>(massBin[i]-15)&&genM<(massBin[i]+15))||(massBin[i]>=1000&&genM>(massBin[i]*0.90)&&genM<(massBin[i]*1.10))) && ((massBin[i]<1200)||((massBin[i]>=1200)&&(((m4l->at(candID))-genM)>-500)))) {
           ntupleVarSet.setCatIndex("massrc",massBin[i]);
           ntupleVarSet.setRealValue("reso",(m4l->at(candID))-genM);
-          ntupleVarSet.setRealValue("myW",weight);
-          dataset->add(ntupleVarSet, weight);
+          ntupleVarSet.setRealValue("myW",weight*t12weight);
+          dataset->add(ntupleVarSet,weight*t12weight);
         }
       }
-    } 
+    }
 
   cout << "dataset n entries: " << dataset->sumEntries() << endl;
 
