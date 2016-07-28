@@ -8,25 +8,7 @@
 
 //spin : 0 spin0, 2 spin2.
 //ch : 0 4mu, 1 4e, 2 2e2mu.
-/*
-#define TAG_MACRO(j) { \
-  float D_2jet = 1./(1.+0.06*(phjj_VAJHU_highestPTJets->at(j)/pvbf_VAJHU_highestPTJets->at(j))); \
-    int tag=0; //0 for untagged, 1 for vbf-tagged, 2 for b-tagged \
-    if(nExtraJets >=2 && D_2jet > 0.5) tag = 1; \
-    else { \
-      if (local_ZZCandType==1) { //1 for merged jet (J) \
-        if (btag1stSubjet > 0.46 && btag2ndSubjet > 0.46) \
-          tag = 2; \
-      } \
-      else { //2 for two resolved jets (jj) \
-        if(btag1stJet > 0.46 && btag2ndJet > 0.46) \
-          tag = 2; \
-      } \
-    } \
-    if(tagged != tag) break; \
-    hreco->Fill(GenHMass,(genHEPMCweight*PUWeight)); \
-}
-*/
+
 #define TAG_MACRO(j) {  float D_2jet = 1./(1.+0.06*(phjj_VAJHU_highestPTJets->at(j)/pvbf_VAJHU_highestPTJets->at(j)));     int tag=0;      if(nExtraJets >=2 && D_2jet > 0.5) tag = 1;     else {       if (local_ZZCandType==1) {          if (btag1stSubjet > 0.46 && btag2ndSubjet > 0.46)           tag = 2;       }       else {          if(btag1stJet > 0.46 && btag2ndJet > 0.46)           tag = 2;       }     }     if(tagged != tag) break;     hreco->Fill(GenHMass,(genHEPMCweight*PUWeight)); }
 
 short local_ZZCandType; //1 for merged jet (J), 2 for two resolved jets (jj)
@@ -51,7 +33,7 @@ TGraphErrors* makegr(int spin=0, int ch=0, Color_t color=2, int marker=20, int l
   strcpy(pchar, "prod/\0");
   TString inputDir = dest;
  
-  int inputfiles_ggH[]={400,450,500,550,600,700,750,800,900,1000};
+  int inputfiles_ggH[]={200,250,400,450,500,550,600,700,750,800,900,1000};
   
   int Nfiles_ggH=sizeof(inputfiles_ggH)/sizeof(*inputfiles_ggH);
   char inputfile[PATH_MAX];
@@ -183,12 +165,12 @@ for (int i=0; i<candTree->GetEntries(); i++) {
 case 0: //consider all
   if(ZZCandType->size() == 1) { // unambiguous
     if(local_ZZCandType==1) { //merged
-      if( (ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel) && (Z1tau21->at(0) <= 0.6)) 
+      if( (ZZCandType->at(0) == local_ZZCandType) && (abs(ZZsel->at(0))>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel) && (Z1tau21->at(0) <= 0.6)) 
         TAG_MACRO(0);
       }
 
     else { //resolved
-      if( (ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel))
+      if( (ZZCandType->at(0) == local_ZZCandType) && (abs(ZZsel->at(0))>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel))
         TAG_MACRO(0);
     }
   }
@@ -196,7 +178,7 @@ case 0: //consider all
   if(ZZCandType->size() == 2) {  // ambiguous
 
     if(local_ZZCandType==1) { //merged
-        if( (ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel) && (Z1tau21->at(0) <= 0.6)) 
+        if( (ZZCandType->at(0) == local_ZZCandType) && (abs(ZZsel->at(0))>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel) && (Z1tau21->at(0) <= 0.6)) 
         {
         TAG_MACRO(0);
       }
@@ -211,7 +193,7 @@ case 0: //consider all
 
     else { //resolved
       
-      if( (ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel)) {
+      if( (ZZCandType->at(0) == local_ZZCandType) && (abs(ZZsel->at(0))>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel)) {
         TAG_MACRO(0);
       }
 
@@ -229,12 +211,12 @@ case 2: // only consider unambiguous
   if(ZZCandType->size() != 1) break; 
 
     if(local_ZZCandType==1) { //merged
-      if( (ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel) && (Z1tau21->at(0) <= 0.6)) 
+      if( (ZZCandType->at(0) == local_ZZCandType) && (abs(ZZsel->at(0))>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel) && (Z1tau21->at(0) <= 0.6)) 
         TAG_MACRO(0);
     }
 
     else { //resolved
-      if( (ZZCandType->at(0) == local_ZZCandType) && (ZZsel->at(0)>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel))
+      if( (ZZCandType->at(0) == local_ZZCandType) && (abs(ZZsel->at(0))>=100) && (Z2Mass->at(0) >= 60) && (Z1Mass->at(0)>=70) && (Z1Mass->at(0)<=105) && (abs(Z2Flav->at(0))==channel))
         TAG_MACRO(0);
     }
   } //switch
@@ -308,9 +290,10 @@ case 2: // only consider unambiguous
 }
 
   TF1 *polyFunctot= new TF1("polyFunctot","([0]+[1]*TMath::Erf( (x-[2])/[3] ))*([4]+[5]*x+[6]*x*x)+[7]*TMath::Gaus(x,[8],[9])", 300, 1000);
-  polyFunctot->SetParameters(-4.42749e+00,4.61212e+0,-6.21611e+01,1.13168e+02,2.14321e+00,1.04083e-03,4.89570e-07, 0.03, 200, 30,0);
-  polyFunctot->SetParLimits(7,0,0.2);
-  polyFunctot->SetParLimits(8,160,210);
+  polyFunctot->SetParameters(-4.42749e+00,4.61212e+0,-6.21611e+01,1.13168e+02,2.14321e+00,1.04083e-03,4.89570e-07, 0.1, 200, 30,0);
+  polyFunctot->SetParLimits(1,0,.2);
+  polyFunctot->SetParLimits(2,300,1000);
+  polyFunctot->SetParLimits(8,500,800);
   polyFunctot->SetParLimits(9,10,170);
   polyFunctot->SetLineColor(color);
  
@@ -407,6 +390,7 @@ void ploteff_sig_spin2_80X_2(){
   mg->GetYaxis()->SetTitle("efficiency*acceptance");
   mg->GetYaxis()->SetRangeUser(0,1);
   mg->GetXaxis()->SetRangeUser(100,4100);
+  mg->GetYaxis()->SetRangeUser(0.,0.35);
 
   TLegend* leg3 = new TLegend(.9,0.3,0.99,.85);
   leg3->SetFillColor(0);
@@ -422,7 +406,7 @@ void ploteff_sig_spin2_80X_2(){
   //leg3->AddEntry(spin2_4mu,"ggH->2b+ 4mu","pl");
   //leg3->AddEntry(spin2_2e2mu,"ggH->2b+ 2e2mu","pl");
   //leg3->AddEntry(spin2_4e,"ggH->2b+ 4e","pl");
-  leg3->Draw();
+  //leg3->Draw();
 
 
   c2->Update();
@@ -431,6 +415,13 @@ void ploteff_sig_spin2_80X_2(){
 }
 
 void ploteff_sig_spin2_VBF() {
+  local_ZZCandType=2;
+  channel=169;
+  tagged=1;
+  exclude=(local_ZZCandType==2)? 0:2;
+  ploteff_sig_spin2_80X_2(); 
+
+  /*
   for(int c:{1,2}) {           //1 for merged jet (J), 2 for two resolved jets (jj)
     local_ZZCandType=c;
     exclude=(local_ZZCandType==2)? 0:2;   //give preference to resolved jets
@@ -441,4 +432,5 @@ void ploteff_sig_spin2_VBF() {
     printf("%d\t%d\t%d\t%d\n", local_ZZCandType, exclude, channel, tagged);
     ploteff_sig_spin2_80X_2();
   }}}
+  */
 }

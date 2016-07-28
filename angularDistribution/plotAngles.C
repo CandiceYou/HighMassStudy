@@ -9,7 +9,7 @@
 using namespace std;
 
 
-void test(char* var1="Gen_costheta1", char* var2="helcosthetaZ1", char* title="test", int nbin=30, double min=-1, double max=1){
+void test(const char* var1="Gen_costheta1", const char* var2="helcosthetaZ1", const char* title="test", int nbin=30, double min=-1, double max=1, int mass=750){
  gStyle->SetPadLeftMargin(0.1);
  gStyle->SetPadRightMargin(0.15);
  gStyle->SetOptFit(0000);
@@ -18,6 +18,7 @@ void test(char* var1="Gen_costheta1", char* var2="helcosthetaZ1", char* title="t
 
  TChain *candTree1 = new TChain("ZZTree/candTree");
 //choose files with polemass>genmass
+
  candTree1->Add("../data/spin2.root"); //no width
 // candTree1->Add("data_new/ggH800_ZZ4lAnalysis_addwt.root");
 // candTree1->Add("data_new/ggH900_ZZ4lAnalysis_addwt.root");
@@ -32,6 +33,7 @@ void test(char* var1="Gen_costheta1", char* var2="helcosthetaZ1", char* title="t
 
  TH1F *hist1 = new TH1F("hist1","hist1",nbin,min,max);
  TH1F *hist2 = new TH1F("hist2","hist2",nbin,min,max);
+
 
  char hist1draw[500],hist2draw[500];
  sprintf(hist1draw,"%s>>hist1",var1);
@@ -51,6 +53,7 @@ void test(char* var1="Gen_costheta1", char* var2="helcosthetaZ1", char* title="t
  hist1->SetLineColor(kRed);
  hist2->SetLineColor(kBlack);
 
+
  hist1->Scale(1/hist1->Integral());
  hist2->Scale(1/hist2->Integral());
 
@@ -63,6 +66,7 @@ void test(char* var1="Gen_costheta1", char* var2="helcosthetaZ1", char* title="t
  hist1->Draw("hist");
  hist2->Draw("samehist");
 
+
 //Legend
  TLegend* leg = new TLegend(.65,0.8,0.85,.9);
  leg->SetFillColorAlpha(0,0);
@@ -74,12 +78,13 @@ void test(char* var1="Gen_costheta1", char* var2="helcosthetaZ1", char* title="t
 
  c->Update();
  char temp[150];
- sprintf(temp,"%s.png",var2);
+ sprintf(temp,"~/www/HighMassStudy/16.7.21/Mass%04d/%s.png",mass,var1);
  c->SaveAs(temp);
  delete c;
  delete hist1;
  delete hist2;
 }
+
 
 void plotAngles(){
 test("helcosthetaZ1","helcosthetaZ1","",50,1, 1);
