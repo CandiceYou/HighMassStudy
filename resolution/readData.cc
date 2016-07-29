@@ -28,12 +28,12 @@ void readData(char* channel="4e")
   dataset = new RooDataSet("resoM","resoM",ntupleVarSet,WeightVar("myW"));
 
   for (int i=0; i<Nfiles; i++) {
-    sprintf(inputfile,"ggHiggs%d/ZZ2l2qAnalysis.root",inputfiles[i]);
-    files.push_back(inputfile);
-    sprintf(inputfile,"VBFHiggs%d/ZZ2l2qAnalysis.root",inputfiles[i]);
-    files.push_back(inputfile);
-//    sprintf(inputfile,"2l2qsamples_2bp/M%d.root",inputfiles[i]);
+//    sprintf(inputfile,"ggHiggs%d/ZZ2l2qAnalysis.root",inputfiles[i]);
 //    files.push_back(inputfile);
+//    sprintf(inputfile,"VBFHiggs%d/ZZ2l2qAnalysis.root",inputfiles[i]);
+//    files.push_back(inputfile);
+    sprintf(inputfile,"BulkGrav%d/ZZ2l2qAnalysis.root",inputfiles[i]);
+    files.push_back(inputfile);
   }
 
   TChain *candTree = new TChain("ZZTree/candTree");
@@ -46,7 +46,10 @@ void readData(char* channel="4e")
     int  nentries = candTree->GetEntries();
 
     //--- ggTree part
-    candTree->SetBranchAddress("ZZMassRefit",&m4l);
+    if(candType == 0)
+      candTree->SetBranchAddress("ZZMass",&m4l);
+    else if(candType == 1)
+      candTree->SetBranchAddress("ZZMassRefit",&m4l);
     candTree->SetBranchAddress("GenHMass",&genM);
     candTree->SetBranchAddress("Z1Flav",&z1flav);
     candTree->SetBranchAddress("Z2Flav",&z2flav);
@@ -94,8 +97,8 @@ void readData(char* channel="4e")
      }
 
      for (int i=0; i<maxMassBin; i++) {
-       if (typ==candType && x.getVal()>xMin[i] && x.getVal()<xMax[i] && ((massBin[i]<1000&&genM>(massBin[i]-15)&&genM<(massBin[i]+15))||(massBin[i]>=1000&&genM>(massBin[i]*0.90)&&genM<(massBin[i]*1.10)))) {
-//       if (typ==candType && x.getVal()>xMin[i] && x.getVal()<xMax[i] && ((massBin[i]<1000&&genM>(massBin[i]-15)&&genM<(massBin[i]+15))||(massBin[i]>=1000&&genM>(massBin[i]*0.90)&&genM<(massBin[i]*1.10))) && ((massBin[i]<1200)||((massBin[i]>=1200)&&(((m4l->at(candID))-genM)>-500)))) {
+//       if (typ==candType && x.getVal()>xMin[i] && x.getVal()<xMax[i] && ((massBin[i]<1000&&genM>(massBin[i]-15)&&genM<(massBin[i]+15))||(massBin[i]>=1000&&genM>(massBin[i]*0.90)&&genM<(massBin[i]*1.10)))) {
+       if (typ==candType && x.getVal()>xMin[i] && x.getVal()<xMax[i] && ((massBin[i]<1000&&genM>(massBin[i]-15)&&genM<(massBin[i]+15))||(massBin[i]>=1000&&genM>(massBin[i]*0.90)&&genM<(massBin[i]*1.10))) && ((massBin[i]<1200)||((massBin[i]>=1200)&&(((m4l->at(candID))-genM)>-500)))) {
           ntupleVarSet.setCatIndex("massrc",massBin[i]);
           ntupleVarSet.setRealValue("reso",(m4l->at(candID))-genM);
           ntupleVarSet.setRealValue("myW",weight*t12weight);

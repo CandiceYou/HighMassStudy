@@ -6,8 +6,8 @@ MassStr=""
 paramIndex=0
 massIndex=0
 
-for mass in {1000}
-#for mass in {400,450,500,550,600,700,750,800,900,1000,1200,1400,1600,1800,2000}
+#for mass in {1000}
+for mass in {400,450,500,550,600,700,750,800,900,1000,1200,1400,1600,1800,2000}
 do
 MassStr+="$mass,"
 ((massIndex++))
@@ -20,11 +20,11 @@ do
 ParamStr[$paramIndex]=""
 ErrStr[$paramIndex]=""
 
-for mass in {1000}
-#or mass in {400,450,500,550,600,700,750,800,900,1000,1200,1400,1600,1800,2000}
+#for mass in {1000}
+for mass in {400,450,500,550,600,700,750,800,900,1000,1200,1400,1600,1800,2000}
 do
-ParamStr[$paramIndex]+="`awk -v ORS="," '/'$var'_CB/{print $3}' singleMassFit/SingleMassFit_ResoParam_MH${mass}_${ch}_J.txt`"
-ErrStr[$paramIndex]+="`awk -v ORS="," '/'$var'_CB/{print $5}' singleMassFit/SingleMassFit_ResoParam_MH${mass}_${ch}_J.txt`"
+ParamStr[$paramIndex]+="`awk -v ORS="," '/'$var'_CB/{print $3}' singleMassFit/SingleMassFit_ResoParam_MH${mass}_${ch}_jj.txt`"
+ErrStr[$paramIndex]+="`awk -v ORS="," '/'$var'_CB/{print $5}' singleMassFit/SingleMassFit_ResoParam_MH${mass}_${ch}_jj.txt`"
 done
 
 echo ${var}
