@@ -102,14 +102,14 @@ using namespace RooFit;
 //  TString inputDir = dest;
   
   char channel[100]; 
-//  int massBin[]={1000};
-//  int massBin[]={400,450,500,550,600,700,750,800,900,1000,1200,1400,1600,1800,2000};
-  int massBin[]={600,800,1000,1200,1400,1600,1800,2000,2500,3000,3500,4000,4500};
+//  int massBin[]={3000};
+  int massBin[]={400,450,500,550,600,700,750,800,900,1000,1200,1400,1600,1800,2000,3000};
+//  int massBin[]={600,800,1000,1200,1400,1600,1800,2000,2500,3000,3500,4000,4500};
 //  int massBin[]={750,800,1000,1200,1600,2000,2500,3000,3500,4000};
 //  int inputfiles[]={750,800,1200,2000,3000,4000};
 //  int inputfiles[]={1000};
-//  int inputfiles[]={400,450,500,550,600,700,750,800,900,1000,1500,2000};
-  int inputfiles[]={600,800,1000,1200,1400,1600,1800,2000,2500,3000,3500,4000,4500};
+  int inputfiles[]={400,450,500,550,600,700,750,800,900,1000,1500,2000};
+//  int inputfiles[]={600,800,1000,1200,1400,1600,1800,2000,2500,3000,3500,4000,4500};
   short candType=1; //0 for merged jet (J), 1 for two resolved jets (jj)
   int exclude=0; //0 for exclude nothing; 1 exclude events with one jet type; 2 exclude events with both jet types
   int maxMassBin=sizeof(massBin)/sizeof(*massBin);;

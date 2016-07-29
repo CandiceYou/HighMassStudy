@@ -28,12 +28,12 @@ void readData(char* channel="4e")
   dataset = new RooDataSet("resoM","resoM",ntupleVarSet,WeightVar("myW"));
 
   for (int i=0; i<Nfiles; i++) {
-//    sprintf(inputfile,"ggHiggs%d/ZZ2l2qAnalysis.root",inputfiles[i]);
-//    files.push_back(inputfile);
-//    sprintf(inputfile,"VBFHiggs%d/ZZ2l2qAnalysis.root",inputfiles[i]);
-//    files.push_back(inputfile);
-    sprintf(inputfile,"BulkGrav%d/ZZ2l2qAnalysis.root",inputfiles[i]);
+    sprintf(inputfile,"ggHiggs%d/ZZ2l2qAnalysis.root",inputfiles[i]);
     files.push_back(inputfile);
+    sprintf(inputfile,"VBFHiggs%d/ZZ2l2qAnalysis.root",inputfiles[i]);
+    files.push_back(inputfile);
+//    sprintf(inputfile,"BulkGrav%d/ZZ2l2qAnalysis.root",inputfiles[i]);
+//    files.push_back(inputfile);
   }
 
   TChain *candTree = new TChain("ZZTree/candTree");
@@ -97,15 +97,17 @@ void readData(char* channel="4e")
      }
 
      for (int i=0; i<maxMassBin; i++) {
-//       if (typ==candType && x.getVal()>xMin[i] && x.getVal()<xMax[i] && ((massBin[i]<1000&&genM>(massBin[i]-15)&&genM<(massBin[i]+15))||(massBin[i]>=1000&&genM>(massBin[i]*0.90)&&genM<(massBin[i]*1.10)))) {
-       if (typ==candType && x.getVal()>xMin[i] && x.getVal()<xMax[i] && ((massBin[i]<1000&&genM>(massBin[i]-15)&&genM<(massBin[i]+15))||(massBin[i]>=1000&&genM>(massBin[i]*0.90)&&genM<(massBin[i]*1.10))) && ((massBin[i]<1200)||((massBin[i]>=1200)&&(((m4l->at(candID))-genM)>-500)))) {
-          ntupleVarSet.setCatIndex("massrc",massBin[i]);
-          ntupleVarSet.setRealValue("reso",(m4l->at(candID))-genM);
-          ntupleVarSet.setRealValue("myW",weight*t12weight);
-          dataset->add(ntupleVarSet,weight*t12weight);
-        }
-      }
-    }
+       if (typ==candType && x.getVal()>xMin[i] && x.getVal()<xMax[i] && ((massBin[i]<1000&&genM>(massBin[i]-15)&&genM<(massBin[i]+15))||(massBin[i]>=1000&&genM>(massBin[i]*0.90)&&genM<(massBin[i]*1.10)))) {
+         if (candType == 1 && ((massBin[i]>=1200) && (((m4l->at(candID))-genM)<-500))) {;}
+         else {
+           ntupleVarSet.setCatIndex("massrc",massBin[i]);
+           ntupleVarSet.setRealValue("reso",(m4l->at(candID))-genM);
+           ntupleVarSet.setRealValue("myW",weight*t12weight);
+           dataset->add(ntupleVarSet,weight*t12weight);
+         }
+       }
+     }
+   }
 
   cout << "dataset n entries: " << dataset->sumEntries() << endl;
 
